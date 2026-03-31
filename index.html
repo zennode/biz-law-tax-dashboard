@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Law & Tax Dashboard — Matt's Portfolio</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --card-hover: #222633;
+    --accent-blue: #4e8cff;
+    --accent-green: #34d399;
+    --accent-orange: #f59e0b;
+    --accent-red: #ef4444;
+    --accent-purple: #a78bfa;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --border: #2d3348;
+    --tag-bg: rgba(78,140,255,0.15);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+
+  /* Header */
+  .header { background:linear-gradient(135deg, #1e2235 0%, #151827 100%); border-bottom:1px solid var(--border); padding:28px 40px; }
+  .header-top { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  .header h1 { font-size:1.6rem; font-weight:700; }
+  .header h1 span { color:var(--accent-blue); }
+  .header-meta { color:var(--text-muted); font-size:0.85rem; }
+  .last-updated { background:var(--tag-bg); color:var(--accent-blue); padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600; }
+
+  /* Navigation Tabs */
+  .tabs { display:flex; gap:4px; padding:12px 40px 0; background:var(--card); border-bottom:1px solid var(--border); overflow-x:auto; }
+  .tab { padding:10px 20px; cursor:pointer; color:var(--text-muted); font-size:0.9rem; font-weight:500; border-bottom:2px solid transparent; transition:all 0.2s; white-space:nowrap; }
+  .tab:hover { color:var(--text); }
+  .tab.active { color:var(--accent-blue); border-bottom-color:var(--accent-blue); }
+
+  /* Main Layout */
+  .main { padding:24px 40px 60px; max-width:1440px; margin:0 auto; }
+
+  /* Section hidden by default */
+  .section { display:none; }
+  .section.active { display:block; }
+
+  /* KPI Row */
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:28px; }
+  .kpi { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; }
+  .kpi-label { font-size:0.78rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+  .kpi-value { font-size:1.6rem; font-weight:700; }
+  .kpi-sub { font-size:0.8rem; color:var(--text-muted); margin-top:4px; }
+  .kpi-value.green { color:var(--accent-green); }
+  .kpi-value.orange { color:var(--accent-orange); }
+  .kpi-value.red { color:var(--accent-red); }
+  .kpi-value.blue { color:var(--accent-blue); }
+  .kpi-value.purple { color:var(--accent-purple); }
+
+  /* Cards */
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:20px; transition:background 0.2s; }
+  .card:hover { background:var(--card-hover); }
+  .card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; gap:12px; flex-wrap:wrap; }
+  .card-title { font-size:1.1rem; font-weight:600; }
+  .card-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(380px, 1fr)); gap:20px; }
+
+  /* Tags */
+  .tag { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; }
+  .tag-opportunity { background:rgba(52,211,153,0.15); color:var(--accent-green); }
+  .tag-risk { background:rgba(239,68,68,0.15); color:var(--accent-red); }
+  .tag-info { background:rgba(78,140,255,0.15); color:var(--accent-blue); }
+  .tag-action { background:rgba(245,158,11,0.15); color:var(--accent-orange); }
+  .tag-new { background:rgba(167,139,250,0.15); color:var(--accent-purple); }
+
+  /* Impact meter */
+  .impact { display:flex; align-items:center; gap:6px; margin-top:8px; }
+  .impact-label { font-size:0.75rem; color:var(--text-muted); }
+  .impact-bar { height:6px; border-radius:3px; background:var(--border); flex:1; max-width:120px; overflow:hidden; }
+  .impact-fill { height:100%; border-radius:3px; }
+  .impact-fill.high { background:var(--accent-red); width:90%; }
+  .impact-fill.medium { background:var(--accent-orange); width:60%; }
+  .impact-fill.low { background:var(--accent-green); width:30%; }
+
+  /* Detail lists */
+  .detail-list { list-style:none; }
+  .detail-list li { padding:10px 0; border-bottom:1px solid var(--border); font-size:0.9rem; }
+  .detail-list li:last-child { border-bottom:none; }
+  .detail-list li strong { color:var(--accent-blue); }
+
+  /* Action items */
+  .action-item { display:flex; gap:12px; padding:12px 16px; border-radius:8px; background:rgba(78,140,255,0.05); border-left:3px solid var(--accent-blue); margin-bottom:10px; }
+  .action-item.green { border-left-color:var(--accent-green); background:rgba(52,211,153,0.05); }
+  .action-item.orange { border-left-color:var(--accent-orange); background:rgba(245,158,11,0.05); }
+  .action-number { font-weight:700; color:var(--accent-blue); min-width:24px; }
+  .action-item.green .action-number { color:var(--accent-green); }
+  .action-item.orange .action-number { color:var(--accent-orange); }
+  .action-text { font-size:0.88rem; }
+  .action-text strong { color:var(--text); }
+
+  /* Collapsible */
+  .collapsible-header { cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+  .collapsible-header::after { content:'▸'; transition:transform 0.2s; font-size:0.9rem; color:var(--text-muted); }
+  .collapsible-header.open::after { transform:rotate(90deg); }
+  .collapsible-body { max-height:0; overflow:hidden; transition:max-height 0.3s ease; }
+  .collapsible-body.open { max-height:3000px; }
+
+  /* Table */
+  table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+  th { text-align:left; padding:10px 14px; background:rgba(78,140,255,0.08); color:var(--accent-blue); font-weight:600; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.3px; }
+  td { padding:10px 14px; border-bottom:1px solid var(--border); }
+  tr:hover td { background:rgba(255,255,255,0.02); }
+
+  /* Responsive */
+  @media (max-width:768px) {
+    .header, .main { padding-left:16px; padding-right:16px; }
+    .tabs { padding-left:16px; }
+    .card-grid { grid-template-columns:1fr; }
+    .kpi-row { grid-template-columns:repeat(2,1fr); }
+  }
+
+  /* Print */
+  @media print {
+    body { background:#fff; color:#111; }
+    .card { border:1px solid #ddd; break-inside:avoid; }
+    .tabs { display:none; }
+    .section { display:block !important; page-break-before:always; }
+  }
+
+  /* Source link */
+  .source-link { color:var(--accent-blue); text-decoration:none; font-size:0.78rem; }
+  .source-link:hover { text-decoration:underline; }
+  .sources-section { margin-top:16px; padding-top:12px; border-top:1px solid var(--border); }
+  .sources-section h4 { font-size:0.78rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px; }
+  .sources-section a { display:block; color:var(--accent-blue); text-decoration:none; font-size:0.82rem; margin-bottom:4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>Law & Tax <span>Intelligence Dashboard</span></h1>
+      <div class="header-meta">Matt's Portfolio — Real Estate · Carwash · Hard Money Lending · Massachusetts</div>
+    </div>
+    <span class="last-updated" id="updatedDate">Updated: March 29, 2026</span>
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-tab="overview">Overview</div>
+  <div class="tab" data-tab="realestate">Real Estate</div>
+  <div class="tab" data-tab="carwash">Carwash</div>
+  <div class="tab" data-tab="lending">Hard Money Lending</div>
+  <div class="tab" data-tab="actions">Action Plan</div>
+  <div class="tab" data-tab="sources">Sources</div>
+</div>
+
+<div class="main">
+
+<!-- ============ OVERVIEW ============ -->
+<div class="section active" id="overview">
+
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">MA Income Surtax</div>
+      <div class="kpi-value orange">+4%</div>
+      <div class="kpi-sub">On income above $1,083,150 (2025)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Bonus Depreciation</div>
+      <div class="kpi-value green">100%</div>
+      <div class="kpi-sub">Restored permanently (OBBBA)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">SALT Cap</div>
+      <div class="kpi-value green">$40,400</div>
+      <div class="kpi-sub">Raised from $10K (2026 TY)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">QBI Deduction</div>
+      <div class="kpi-value green">20%</div>
+      <div class="kpi-sub">Made permanent (was expiring)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Section 179 Limit</div>
+      <div class="kpi-value blue">$2.56M</div>
+      <div class="kpi-sub">2026 inflation-adjusted</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Estate Exemption</div>
+      <div class="kpi-value blue">$15M</div>
+      <div class="kpi-sub">$30M joint — made permanent</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Key Legislative Changes Affecting Your Businesses</div>
+      <span class="tag tag-new">2025–2026</span>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Change</th><th>Level</th><th>Businesses Affected</th><th>Impact</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>One Big Beautiful Bill Act (signed July 4, 2025)</td><td>Federal</td><td>All three</td><td><span class="tag tag-opportunity">Major Opportunity</span></td></tr>
+        <tr><td>MA 4% Surtax — threshold now $1,083,150</td><td>State</td><td>All three</td><td><span class="tag tag-risk">Tax Increase Risk</span></td></tr>
+        <tr><td>MA $1M+ Real Estate Transfer Withholding (Nov 2025)</td><td>State</td><td>Real Estate / Lending</td><td><span class="tag tag-risk">Compliance Required</span></td></tr>
+        <tr><td>100% Bonus Depreciation restored permanently</td><td>Federal</td><td>Real Estate / Carwash</td><td><span class="tag tag-opportunity">Major Opportunity</span></td></tr>
+        <tr><td>SALT Deduction raised to $40,400</td><td>Federal</td><td>All three</td><td><span class="tag tag-opportunity">Tax Savings</span></td></tr>
+        <tr><td>QBI 20% Deduction made permanent</td><td>Federal</td><td>All three</td><td><span class="tag tag-opportunity">Tax Savings</span></td></tr>
+        <tr><td>Qualified Opportunity Zones made permanent</td><td>Federal</td><td>Real Estate / Lending</td><td><span class="tag tag-opportunity">Growth Opportunity</span></td></tr>
+        <tr><td>MA Mortgage Licensing Amendments (Oct 2025)</td><td>State</td><td>Hard Money Lending</td><td><span class="tag tag-info">Compliance Update</span></td></tr>
+        <tr><td>MA Housing & Commercial-to-Residential Credits</td><td>State</td><td>Real Estate</td><td><span class="tag tag-opportunity">New Credit</span></td></tr>
+        <tr><td>Section 179 increased to $2.5M/$2.56M</td><td>Federal</td><td>Carwash / Real Estate</td><td><span class="tag tag-opportunity">Tax Savings</span></td></tr>
+        <tr><td>MA Hazardous Waste Program RCRA Authorization (Nov 2025)</td><td>State</td><td>Carwash</td><td><span class="tag tag-info">Compliance Update</span></td></tr>
+        <tr><td>Business Interest Deduction expanded (Sec 163j)</td><td>Federal</td><td>All three</td><td><span class="tag tag-opportunity">Tax Savings</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============ REAL ESTATE ============ -->
+<div class="section" id="realestate">
+
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">MA Long-Term Cap Gains (Top)</div>
+      <div class="kpi-value red">9%</div>
+      <div class="kpi-sub">5% base + 4% surtax over $1.08M</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">MA Short-Term Cap Gains (Top)</div>
+      <div class="kpi-value red">12.5%</div>
+      <div class="kpi-sub">8.5% base + 4% surtax</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Transfer Withholding Threshold</div>
+      <div class="kpi-value orange">$1M+</div>
+      <div class="kpi-sub">Effective Nov 1, 2025</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">1031 Exchange</div>
+      <div class="kpi-value green">Active</div>
+      <div class="kpi-sub">Defers both federal & MA taxes</div>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">MA 4% Surtax on High Income</div>
+        <span class="tag tag-risk">Risk</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> Additional 4% tax on all taxable income (including capital gains) above $1,083,150 for 2025 (indexed for inflation annually).</li>
+        <li><strong>Impact on you:</strong> Profitable flip sales or property dispositions that push your income above the threshold trigger 9% effective state capital gains rate (up from 5%).</li>
+        <li><strong>Strategy:</strong> Time property sales across tax years to stay under the threshold. Use 1031 exchanges to defer gains. Consider installment sales to spread recognition over multiple years.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">100% Bonus Depreciation — Permanent</div>
+        <span class="tag tag-opportunity">Opportunity</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> The One Big Beautiful Bill Act (OBBBA) permanently restored 100% first-year bonus depreciation for qualified property acquired after Jan 19, 2025.</li>
+        <li><strong>Impact on you:</strong> All personal property in rental units (appliances, HVAC, flooring) and qualified improvement property (interior renovations to commercial spaces) can be fully expensed in year one.</li>
+        <li><strong>Strategy:</strong> Perform cost segregation studies on every property to reclassify building components (e.g., lighting, landscaping, parking lots) from 39-year to 5/7/15-year life, then apply 100% bonus depreciation. This can generate massive paper losses to offset rental income and flip gains.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">MA $1M+ Transfer Withholding</div>
+        <span class="tag tag-action">Action Required</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> As of Nov 1, 2025, all real estate transfers with gross sales price ≥ $1M require 4% withholding at closing (non-residents). Full-year MA residents are exempt.</li>
+        <li><strong>Impact on you:</strong> As a MA resident you're exempt from withholding, but your hard money lending borrowers who are non-residents will be affected. Flip buyers from out of state will have reduced proceeds at closing.</li>
+        <li><strong>Strategy:</strong> Ensure your borrowers (hard money clients) are aware of this rule. For your own sales, confirm residency documentation is on file. For fix-and-flip deals, factor the withholding impact into deal analysis for non-resident partners.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">QBI Deduction — Now Permanent</div>
+        <span class="tag tag-opportunity">Opportunity</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> The 20% Section 199A qualified business income deduction has been made permanent by OBBBA. Was set to expire end of 2025.</li>
+        <li><strong>Impact on you:</strong> Rental income, carwash income, and lending income all potentially qualify for a 20% deduction on pass-through income, reducing your effective federal rate.</li>
+        <li><strong>Strategy:</strong> Ensure each business entity is structured to maximize QBI. If any business is a specified service trade or business (SSTB), income limits apply — consider restructuring. Your rental activities should qualify under the safe harbor (250+ hours) or real estate professional status.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Qualified Opportunity Zones — Permanent</div>
+        <span class="tag tag-opportunity">Opportunity</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> OBBBA made QOZ provisions permanent and requires new zone designations by July 1, 2026, effective Jan 1, 2027. Deferral and basis adjustment rules extended.</li>
+        <li><strong>Impact on you:</strong> Capital gains from property sales or other investments can be deferred by reinvesting in QOZ funds. New zones will open up fresh investment territory in Massachusetts.</li>
+        <li><strong>Strategy:</strong> Identify current and upcoming MA Opportunity Zones. When selling flip properties, roll gains into QOZ real estate investments. This can pair with your hard money lending — fund projects in opportunity zones for additional tax benefits.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">MA Housing & Conversion Tax Credits</div>
+        <span class="tag tag-new">New for 2025</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> Two new nonrefundable credits: (1) for developers building new housing units (amount set by MA Housing Finance Agency), and (2) for converting commercial property to residential/mixed-use (up to 10% of conversion costs, set by EOHLC).</li>
+        <li><strong>Impact on you:</strong> If you convert any commercial holdings to residential or develop new units, you may qualify for meaningful state tax credits.</li>
+        <li><strong>Strategy:</strong> Evaluate underperforming commercial properties for residential conversion potential. The 10% credit on conversion costs plus federal bonus depreciation on improvements creates a powerful tax incentive stack.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">1031 Exchange — Still Your Best Friend</div>
+        <span class="tag tag-info">Ongoing</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> 1031 like-kind exchanges continue to defer both federaland Massachusetts capital gains taxes. No changes to the program under OBBBA.</li>
+        <li><strong>Impact on you:</strong> When selling rental properties, you can defer the full federal + MA tax burden (up to 9% state + 20% federal + 3.8% NIIT).</li>
+        <li><strong>Strategy:</strong> For rentals you're ready to exit, use 1031 exchanges to trade into higher-quality or Opportunity Zone properties. Combine with cost segregation on the replacement property to generate immediate depreciation deductions.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Estate Tax Exemption — $15M Permanent</div>
+        <span class="tag tag-opportunity">Opportunity</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> OBBBA made the doubled federal estate/gift exemption permanent at $15M per person ($30M joint) for 2026, indexed for inflation. Note: MA estate tax exemption remains at $2M (much lower).</li>
+        <li><strong>Impact on you:</strong> Federal estate planning pressure eased, but Massachusetts still taxes estates above $2M — this is a significant gap for real estate portfolios.</li>
+        <li><strong>Strategy:</strong> Use irrevocable trusts, family LLCs, and valuation discounts to keep your MA taxable estate under $2M. Gift properties or LLC interests during your lifetime to reduce estate value. The $15M federal exemption gives ample room for gifting strategies.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CARWASH ============ -->
+<div class="section" id="carwash">
+
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">Section 179 Limit (2026)</div>
+      <div class="kpi-value green">$2.56M</div>
+      <div class="kpi-sub">Phase-out starts at $4.09M</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Bonus Depreciation</div>
+      <div class="kpi-value green">100%</div>
+      <div class="kpi-sub">All qualified equipment & improvements</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">QBI Deduction</div>
+      <div class="kpi-value green">20%</div>
+      <div class="kpi-sub">Permanent — pass-through income</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">RCRA Authorization</div>
+      <div class="kpi-value blue">Updated</div>
+      <div class="kpi-sub">MA hazardous waste rules — Nov 2025</div>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">100% Bonus Depreciation on Equipment</div>
+        <span class="tag tag-opportunity">Major Win</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> All carwash equipment purchased and placed in service after Jan 19, 2025 qualifies for 100% first-year expensing — tunnel systems, water reclamation, dryers, vacuums, POS systems, and more.</li>
+        <li><strong>Impact:</strong> Upgrading or expanding your carwash operation now carries an enormous tax advantage. Full cost written off in year one.</li>
+        <li><strong>Strategy:</strong> Accelerate any planned equipment upgrades or expansion to take full advantage. Purchase new tunnel equipment, water recycling systems, or automated payment kiosks — write off 100% immediately. Pair with Section 179 for any costs exceeding bonus depreciation eligibility.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Section 179 Expensing — $2.56M for 2026</div>
+        <span class="tag tag-opportunity">Opportunity</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> Section 179 now allows up to $2.56M in immediate deductions for 2026 (up from previous limits), with phase-out at $4.09M. Covers equipment, vehicles, and certain improvements.</li>
+        <li><strong>Impact:</strong> Your carwash vehicles (detail vans, supply trucks over 6,000 lbs GVWR) can qualify for accelerated deductions. Heavy vehicles over 14,000 lbs get full Section 179 without luxury caps.</li>
+        <li><strong>Strategy:</strong> Coordinate equipment and vehicle purchases across your businesses. Stack Section 179 first, then apply bonus depreciation on remaining basis. Document business use carefully (>50% required).</li>
+   </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">MA Hazardous Waste & Environmental Compliance</div>
+        <span class="tag tag-info">Compliance</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> Massachusetts received final EPA authorization for updated RCRA hazardous waste program revisions (effective Nov 4, 2025). MassDEP continues to regulate wastewater discharge and chemical handling.</li>
+        <li><strong>Impact:</strong> Carwash operations must comply with updated wastewater discharge permits, chemical storage regulations, and waste disposal rules.</li>
+        <li><strong>Strategy:</strong> Audit your current wastewater treatment and chemical management systems. Invest in water reclamation (qualifies for bonus depreciation) to reduce discharge and lower compliance risk. Keep documentation current for MassDEP inspections.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">SALT Deduction Increase</div>
+        <span class="tag tag-opportunity">Tax Savings</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> SALT deduction cap raised from $10K to $40,400 for 2026 (with 1% annual increases through 2029).</li>
+        <li><strong>Impact:</strong> Your Massachusetts property taxes and state income taxes on carwash profits are now more deductible on your federal return.</li>
+        <li><strong>Strategy:</strong> Re-evaluate whether itemizing now makes more sense. The $40K cap can offset significant MA state taxes, especially with the 4% surtax hitting higher earners. Work with your CPA to model the full benefit.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Business Interest Deduction Expansion (Sec 163j)</div>
+        <span class="tag tag-opportunity">Opportunity</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> OBBBA now computes adjusted taxable income (ATI) without subtracting depreciation, amortization, and depletion — effectively increasing the amount of business interest you can deduct.</li>
+        <li><strong>Impact:</strong> If your carwash has equipment loans or an acquisition loan, more interest expense is now deductible.</li>
+        <li><strong>Strategy:</strong> Review financing on carwash equipment and real estate. The expanded interest deduction may make debt-financed expansion more tax-efficient. Consider whether refinancing at current terms makes sense given the expanded deductibility.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ HARD MONEY LENDING ============ -->
+<div class="section" id="lending">
+
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">MA Usury Limit</div>
+      <div class="kpi-value red">20% max</div>
+      <div class="kpi-sub">Criminal penalty above this rate</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">MA Avg Hard Money Rate</div>
+      <div class="kpi-value blue">11.39%</div>
+      <div class="kpi-sub">Q3 2025 data</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">License Exemption</div>
+      <div class="kpi-value orange">&lt;5 loans/yr</div>
+      <div class="kpi-sub">Under 5 residential in 12 months</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">QBI Deduction</div>
+      <div class="kpi-value green">20%</div>
+      <div class="kpi-sub">Lending income may qualify</div>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">MA Division of Banks — Licensing Amendments</div>
+        <span class="tag tag-action">Action Required</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> On Sept 23, 2025, the MA Division of Banks finalized amendments to the Mortgage Lender and Broker Licensing Law, Small Loans Law, and Truth in Lending Act. Changes update licensing procedures, disclosure rules, and financial-responsibility standards.</li>
+        <li><strong>Impact:</strong> If you make 5+ residential mortgage loans in a 12-month period, you need a license. The Division now reviews profitability, historical net losses, and other prudential indicators when evaluating financial responsibility.</li>
+        <li><strong>Strategy:</strong> Audit your loan volume. If approaching the 5-loan residential threshold, either obtain a license or focus lending on commercial/business-purpose loans (which are generally exempt). Update your disclosures and compliance documentation to match the new rules.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Business-Purpose Lending Exemption</div>
+        <span class="tag tag-opportunity">Strategy</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> Loans made solely for business purposes (e.g., to fund fix-and-flip projects or commercial rehabs) are generally exempt from MA mortgage licensing requirements and many federal consumer protection rules (TILA, RESPA).</li>
+        <li><strong>Impact:</strong> Structuring your hard money loans as business-purpose loans significantly reduces regulatory burden.</li>
+        <li><strong>Strategy:</strong> Ensure all loan documentation clearly states the business purpose. Require borrowers to sign business-purpose certifications. Never lend for owner-occupied residential purchases without proper licensing. This is your biggest compliance lever.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">MA Usury Laws — 20% Criminal Threshold</div>
+        <span class="tag tag-risk">Compliance</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> Massachusetts prescribes 6% legal interest unless agreed otherwise in writing. Charging above 20% per annum triggers criminal usury penalties (up to 10 years imprisonment, $10K fine).</li>
+        <li><strong>Impact:</strong> With market rates at 9–14%, plus points and fees, total effective rates can approach limits. Points, origination fees, and other charges may be counted toward the usury calculation.</li>
+        <li><strong>Strategy:</strong> Calculate your all-in effective rate including points and fees on every loan to ensure you stay below 20%. Have your attorney review fee structures. For higher-risk loans, use equity participation or profit-sharing instead of higher interest rates.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">QOZ Lending Opportunity</div>
+        <span class="tag tag-opportunity">Growth</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> With QOZ provisions now permanent and new zones coming by 2027, demand for financing in Opportunity Zones will increase.</li>
+        <li><strong>Impact:</strong> Borrowers will increasingly seek hard money loans for QOZ projects to meet the substantial improvement requirements within 30 months.</li>
+        <li><strong>Strategy:</strong> Position your lending business to serve QOZ investors. Market your speed advantage — QOZ investors need fast capital deployment. Consider creating QOZ-specific loan products with terms aligned to the 30-month improvement timeline.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">MA $1M+ Withholding — Borrower Impact</div>
+        <span class="tag tag-info">Awareness</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> Your non-resident borrowers selling properties ≥$1M will have 4% withheld at closing. This reduces their available cash for loan repayment.</li>
+        <li><strong>Impact:</strong> Non-resident borrowers on high-value flips may struggle to repay your loan at closing if they haven't budgeted for the withholding.</li>
+        <li><strong>Strategy:</strong> Add withholding awareness to your underwriting process. For non-resident borrowers on $1M+ deals, ensure the exit analysis accounts for the 4% withholding. Consider requiring a withholding reserve or adjusting LTV accordingly.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Lead Paint Compliance for Funded Projects</div>
+        <span class="tag tag-risk">Risk</span>
+      </div>
+      <ul class="detail-list">
+        <li><strong>What:</strong> Massachusetts has some of the strictest lead paint laws in the nation (Ch. 111 § 197). Properties built before 1978 require deleading when a child under 6 resides there. Deleading must be performed by licensed contractors.</li>
+        <li><strong>Impact:</strong> Many fix-and-flip loans fund renovations on pre-1978 properties. Borrowers who skip lead abatement face massive liability — which is also a risk to your collateral value.</li>
+        <li><strong>Strategy:</strong> Require lead inspection reports in your underwriting for pre-1978 properties. Include deleading costs in the renovation budget and loan amount. This protects your collateral and helps borrowers avoid legal issues.</li>
+      </ul>
+      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ACTION PLAN ============ -->
+<div class="section" id="actions">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Immediate Actions (Next 30 Days)</div>
+      <span class="tag tag-action">Priority</span>
+    </div>
+    <div class="action-item orange">
+      <div class="action-number">1</div>
+      <div class="action-text"><strong>Schedule a cost segregation study</strong> on all rental properties (residential and commercial). With 100% bonus depreciation now permanent, this is the single highest-impact tax move available. Target properties purchased or improved since 2020 that haven't been studied.</div>
+    </div>
+    <div class="action-item orange">
+      <div class="action-number">2</div>
+      <div class="action-text"><strong>Audit your hard money lending volume.</strong> Count residential mortgage loans made in the past 12 months. If at or near 5, either obtain a MA Division of Banks license or restructure remaining deals as business-purpose-only loans with proper documentation.</div>
+    </div>
+    <div class="action-item orange">
+      <div class="action-number">3</div>
+      <div class="action-text"><strong>Review all-in interest rates</strong> on your hard money loan products. Calculate total effective annual rate including points, origination fees, and other charges. Ensure no product exceeds the 20% criminal usury threshold.</div>
+    </div>
+    <div class="action-item orange">
+      <div class="action-number">4</div>
+      <div class="action-text"><strong>Update your carwash wastewater compliance documentation.</strong> With the new MA RCRA authorization, ensure your permits, chemical handling procedures, and discharge records are current for any MassDEP audit.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Strategic Actions (Next 90 Days)</div>
+      <span class="tag tag-opportunity">Growth</span>
+    </div>
+    <div class="action-item green">
+      <div class="action-number">5</div>
+      <div class="action-text"><strong>Accelerate carwash equipment upgrades.</strong> Purchase planned tunnel systems, water reclamation equipment, or automation technology now. Write off 100% in year one via bonus depreciation. Water reclamation systems also reduce environmental compliance costs.</div>
+    </div>
+    <div class="action-item green">
+      <div class="action-number">6</div>
+      <div class="action-text"><strong>Evaluate commercial-to-residential conversion opportunities.</strong> If you own underperforming commercial properties, the new MA tax credit covers up to 10% of conversion costs, stacking with federal bonus depreciation on improvements.</div>
+    </div>
+    <div class="action-item green">
+      <div class="action-number">7</div>
+      <div class="action-text"><strong>Map Massachusetts Opportunity Zones</strong> and identify target properties for both direct investment and hard money lending. With QOZ now permanent, build a marketing campaign for your lending business targeting QOZ investors who need fast financing.</div>
+    </div>
+    <div class="action-item green">
+      <div class="action-number">8</div>
+      <div class="action-text"><strong>Model the SALT deduction increase</strong> with your CPA. With the cap rising to $40,400, determine whether itemizing or changing your entity structure provides a better outcome across all three businesses.</div>
+    </div>
+    <div class="action-item green">
+      <div class="action-number">9</div>
+      <div class="action-text"><strong>Structure entities for QBI optimization.</strong> Ensure each business (real estate, carwash, lending) is in a pass-through entity eligible for the 20% QBI deduction. If lending is classified as an SSTB, consider restructuring to maximize the deduction below income limits.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Long-Term Planning (6–12 Months)</div>
+      <span class="tag tag-info">Strategic</span>
+    </div>
+    <div class="action-item">
+      <div class="action-number">10</div>
+      <div class="action-text"><strong>Implement 1031 exchange pipeline.</strong> Identify rental properties to exit and replacement targets. Chain 1031 exchanges into QOZ investments for maximum tax deferral. The combination of 1031 → QOZ → cost segregation creates a powerful triple-layer tax strategy.</div>
+    </div>
+    <div class="action-item">
+      <div class="action-number">11</div>
+      <div class="action-text"><strong>Start estate planning with the $15M exemption.</strong> Use family LLCs and irrevocable trusts to transfer real estate interests. The MA estate tax kicks in at just $2M — aggressive gifting during your lifetime using the federal exemption protects your portfolio.</div>
+    </div>
+    <div class="action-item">
+      <div class="action-number">12</div>
+      <div class="action-text"><strong>Develop a hard money lending compliance manual.</strong> With the new Division of Banks amendments, create standardized loan documentation packages, business-purpose certifications, and disclosure templates. This protects you and scales your operation.</div>
+    </div>
+    <div class="action-item">
+      <div class="action-number">13</div>
+      <div class="action-text"><strong>Explore "qualified production property" status for the carwash.</strong> Under OBBBA, nonresidential real property used in production may qualify for 100% bonus depreciation on the building itself (not just equipment). Consult your tax advisor on whether carwash operations qualify.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SOURCES ============ -->
+<div class="section" id="sources">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Federal Law & Tax Sources</div>
+    </div>
+    <ul class="detail-list">
+      <li><a class="source-link" href="https://www.irs.gov/newsroom/one-big-beautiful-bill-provisions" target="_blank">IRS — One Big Beautiful Bill Provisions</a></li>
+      <li><a class="source-link" href="https://www.citrincooperman.com/In-Focus-Resource-Center/The-One-Big-Beautiful-Bill-Acts-Impact-on-Real-Estate" target="_blank">Citrin Cooperman — OBBBA Impact on Real Estate</a></li>
+      <li><a class="source-link" href="https://www.cozen.com/news-resources/publications/2025/tax-provisions-under-one-big-beautiful-bill-affecting-real-estate-investment" target="_blank">Cozen O'Connor — Tax Provisions Under OBBBA Affecting Real Estate</a></li>
+      <li><a class="source-link" href="https://warrenaverett.com/insights/one-big-beautiful-bill-bonus-depreciation/" target="_blank">Warren Averett — OBBBA Bonus Depreciation Breakdown</a></li>
+      <li><a class="source-link" href="https://www.bdo.com/insights/tax/one-big-beautiful-bill-act-expands-100-depreciation-expensing-opportunities" target="_blank">BDO — OBBBA 100% Depreciation Expensing</a></li>
+      <li><a class="source-link" href="https://www.allenmatkins.com/real-ideas/bonus-depreciation-is-back-and-other-big-beautiful-taxes.html" target="_blank">Allen Matkins — Bonus Depreciation Is Back</a></li>
+      <li><a class="source-link" href="https://turbotax.intuit.com/tax-tips/general/taxes-2021-7-upcoming-tax-law-changes/L3xFucBvV" target="_blank">TurboTax — OBBBA Tax Law Changes Overview</a></li>
+      <li><a class="source-link" href="https://vipwealthadvisors.com/insights/section-179-deduction-2026" target="_blank">VIP Wealth Advisors — Section 179 Deduction 2026</a></li>
+      <li><a class="source-link" href="https://www.stinson.com/newsroom-publications-one-big-beautiful-bill-explained" target="_blank">Stinson LLP — One Big Beautiful Bill Explained</a></li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Massachusetts State Sources</div>
+    </div>
+    <ul class="detail-list">
+      <li><a class="source-link" href="https://www.mass.gov/info-details/massachusetts-4-surtax-on-taxable-income" target="_blank">Mass.gov — 4% Surtax on Taxable Income</a></li>
+      <li><a class="source-link" href="https://darroweverett.com/massachusetts-real-estate-transfers-2025-rule-legal-analysis/" target="_blank">Darrow Everett — MA Real Estate Transfers $1M+ New Rules</a></li>
+      <li><a class="source-link" href="https://cozbycpa.com/2026/01/26/ma-dor-tax-law-changes-and-new-initiatives-for-tax-year-2025/" target="_blank">Cozby CPA — MA DOR Tax Changes for 2025</a></li>
+      <li><a class="source-link" href="https://www.consumerfinanceandfintechblog.com/2025/10/massachusetts-finalizes-amendments-to-mortgage-licensing-truth-in-lending-and-small-loan-regulations/" target="_blank">Consumer Finance Blog — MA Mortgage Licensing Amendments</a></li>
+      <li><a class="source-link" href="https://nationaltaxreports.com/massachusetts-tax-on-capital-gains/" target="_blank">National Tax Reports — MA Capital Gains Tax 2025-2026</a></li>
+      <li><a class="source-link" href="https://www.realized1031.com/1031-exchange/massachusetts" target="_blank">Realized 1031 — Massachusetts 1031 Exchange Guide</a></li>
+      <li><a class="source-link" href="https://www.dfllp.com/hard-money-lenders-in-massachusetts-heres-what-you-need-to-know/" target="_blank">Dalton & Finegold — Hard Money Lenders in MA</a></li>
+      <li><a class="source-link" href="https://www.steadily.com/blog/rental-property-tax-laws-regulations-massachusetts" target="_blank">Steadily — MA Rental Property Tax Laws 2026</a></li>
+      <li><a class="source-link" href="https://www.albaneselawllc.com/blog/massachusetts-estate-tax/" target="_blank">Albanese Law — Massachusetts Estate Tax 2026</a></li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// Tab navigation
+const tabs = document.querySelectorAll('.tab');
+const sections = document.querySelectorAll('.section');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+
+// Collapsible sections
+document.querySelectorAll('.collapsible-header').forEach(header => {
+  header.addEventListener('click', () => {
+    header.classList.toggle('open');
+    header.nextElementSibling.classList.toggle('open');
+  });
+});
+
+// Update date
+document.getElementById('updatedDate').textContent = 'Updated: ' + new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+</script>
+</body>
+</html>
