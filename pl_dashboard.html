@@ -87,7 +87,8 @@
     box-shadow: 0 1px 4px rgba(0,0,0,.05);
   }
   .chart-card h3 { font-size: 0.85rem; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
-  canvas { width:100% !important; }
+  canvas { max-width:100%; }
+  .chart-card > canvas { width:100% !important; }
   /* ── Op KPI gauges ── */
   .op-kpi-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:18px; }
   @media(max-width:700px) { .op-kpi-grid { grid-template-columns:1fr; } }
@@ -180,11 +181,15 @@
   <div class="chart-grid" style="margin-top:20px">
     <div class="chart-card">
       <h3>Income Mix — Last Year</h3>
-      <canvas id="chartInc" height="200"></canvas>
+      <div style="position:relative; height:220px;">
+        <canvas id="chartInc"></canvas>
+      </div>
     </div>
     <div class="chart-card">
       <h3>Expense Mix — Last Year</h3>
-      <canvas id="chartExp" height="200"></canvas>
+      <div style="position:relative; height:220px;">
+        <canvas id="chartExp"></canvas>
+      </div>
     </div>
   </div>
 
