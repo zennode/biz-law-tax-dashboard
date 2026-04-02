@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Portfolio — P&L Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --navy:   #1F3864;
+    --blue:   #2F5496;
+    --lblue:  #BDD7EE;
+    --gold:   #C9A227;
+    --green:  #70AD47;
+    --red:    #E05252;
+    --orange: #ED7D31;
+    --gray:   #F4F6FA;
+    --white:  #FFFFFF;
+    --text:   #1a2035;
+    --muted:  #6B7280;
+    --border: #DDE3ED;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--gray);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  /* ── Header ── */
+  .site-header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+    padding: 28px 40px 22px;
+    color: #fff;
+  }
+  .site-header h1 {
+    font-size: 1.85rem; font-weight: 700; letter-spacing: -0.02em;
+    color: var(--gold);
+  }
+  .site-header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; }
+  .header-meta { display:flex; gap:24px; margin-top: 14px; }
+  .header-badge {
+    background: rgba(255,255,255,0.12); border-radius: 20px;
+    padding: 4px 14px; font-size: 0.78rem; font-weight: 600; color: #fff;
+  }
+  /* ── Main layout ── */
+  .main { max-width: 1400px; margin: 0 auto; padding: 28px 32px 48px; }
+  /* ── Section title ── */
+  .section-title {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--blue);
+    margin-bottom: 12px; margin-top: 32px;
+    padding-left: 4px; border-left: 3px solid var(--gold);
+    padding-left: 8px;
+  }
+  /* ── KPI cards ── */
+  .kpi-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:14px; }
+  .kpi-card {
+    background: var(--white); border-radius: 12px; padding: 20px 18px;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    position: relative; overflow: hidden;
+  }
+  .kpi-card::before {
+    content:''; position:absolute; top:0; left:0; width:4px; height:100%;
+    background: var(--blue);
+  }
+  .kpi-card.green::before { background: var(--green); }
+  .kpi-card.red::before   { background: var(--red); }
+  .kpi-card.gold::before  { background: var(--gold); }
+  .kpi-card.orange::before { background: var(--orange); }
+  .kpi-label { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+  .kpi-value { font-size: 1.65rem; font-weight: 700; margin-top: 6px; color: var(--navy); }
+  .kpi-sub   { font-size: 0.78rem; color: var(--muted); margin-top: 3px; }
+  .kpi-delta { font-size: 0.8rem; font-weight: 600; margin-top: 6px; }
+  .kpi-delta.up   { color: var(--green); }
+  .kpi-delta.down { color: var(--red); }
+  /* ── Chart grid ── */
+  .chart-grid { display:grid; grid-template-columns: 1fr 1fr; gap:20px; }
+  .chart-grid-3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:20px; }
+  @media(max-width:900px) {
+    .chart-grid, .chart-grid-3 { grid-template-columns: 1fr; }
+  }
+  .chart-card {
+    background: var(--white); border-radius: 12px; padding: 22px;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .chart-card h3 { font-size: 0.85rem; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
+  canvas { width:100% !important; }
+  /* ── Op KPI gauges ── */
+  .op-kpi-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:18px; }
+  @media(max-width:700px) { .op-kpi-grid { grid-template-columns:1fr; } }
+  .op-kpi-card {
+    background: var(--white); border-radius: 12px; padding: 22px;
+    border: 1px solid var(--border); text-align:center;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .op-kpi-card h4 { font-size:0.78rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; margin-bottom:8px; }
+  .gauge-wrap { position:relative; width:120px; height:60px; margin: 0 auto 8px; overflow:hidden; }
+  .gauge-wrap canvas { width:120px !important; height:60px !important; }
+  .gauge-center { position:absolute; bottom:0; left:0; right:0; text-align:center; font-size:1.2rem; font-weight:700; color:var(--navy); }
+  .op-kpi-sub { font-size:0.75rem; color:var(--muted); margin-top:4px; }
+  /* ── Tables ── */
+  .table-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+  thead th {
+    background: var(--navy); color: #fff;
+    padding: 9px 12px; font-size:0.75rem; font-weight:600;
+    text-align:right; white-space:nowrap;
+  }
+  thead th:first-child { text-align:left; }
+  tbody tr:nth-child(even) { background: #F8FAFE; }
+  tbody tr:hover { background: #EFF4FB; }
+  tbody td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align:right; white-space:nowrap; }
+  tbody td:first-child { text-align:left; font-weight:600; color:var(--navy); }
+  .pos { color: var(--green); font-weight:600; }
+  .neg { color: var(--red); font-weight:600; }
+  /* ── Tabs ── */
+  .tabs { display:flex; gap:4px; margin-bottom:16px; }
+  .tab {
+    padding: 7px 16px; border-radius:8px; font-size:0.8rem; font-weight:600;
+    cursor:pointer; border: 1.5px solid var(--border);
+    background: var(--white); color: var(--muted); transition:.15s;
+  }
+  .tab.active { background: var(--navy); color:#fff; border-color:var(--navy); }
+  .tab-pane { display:none; }
+  .tab-pane.active { display:block; }
+  /* ── Waterfall ── */
+  .wf-bar-wrap { display:flex; flex-direction:column; gap:6px; padding:8px 0; }
+  .wf-row { display:flex; align-items:center; gap:10px; font-size:0.8rem; }
+  .wf-label { width:160px; text-align:right; color:var(--muted); font-size:0.76rem; flex-shrink:0; }
+  .wf-bar-bg { flex:1; height:22px; border-radius:4px; background:#EEF2FA; overflow:hidden; position:relative; }
+  .wf-bar { height:100%; border-radius:4px; transition:.3s; }
+  .wf-val { width:110px; text-align:right; font-weight:600; font-size:0.8rem; flex-shrink:0; }
+  /* ── Scrollable table container ── */
+  .scroll-table { max-height: 420px; overflow-y:auto; }
+  .scroll-table table thead th { position:sticky; top:0; z-index:1; }
+  /* ── Footer ── */
+  footer {
+    text-align:center; font-size:0.72rem; color:var(--muted);
+    padding: 22px 0 32px;
+    border-top: 1px solid var(--border); margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <h1>🏢 Property Portfolio — P&amp;L Dashboard</h1>
+  <p>Last Year (Apr 2025 – Mar 2026) vs. Prior Year (Apr 2024 – Mar 2025)</p>
+  <div class="header-meta">
+    <span class="header-badge" id="hb-props"></span>
+    <span class="header-badge" id="hb-noi"></span>
+    <span class="header-badge" id="hb-cfads"></span>
+    <span class="header-badge">As of Mar 2026</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ── Portfolio KPIs ── -->
+  <div class="section-title">Portfolio Overview</div>
+  <div class="kpi-grid" id="kpi-grid"></div>
+
+  <!-- ── Charts row 1 ── -->
+  <div class="section-title">Performance Analysis</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Income vs. Expenses — Top 20 Properties by NOI</h3>
+      <canvas id="chartNOI" height="260"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>P&amp;L Waterfall — Portfolio Total</h3>
+      <div class="wf-bar-wrap" id="waterfall"></div>
+    </div>
+  </div>
+
+  <!-- ── Charts row 2 ── -->
+  <div class="chart-grid" style="margin-top:20px">
+    <div class="chart-card">
+      <h3>Income Mix — Last Year</h3>
+      <canvas id="chartInc" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Expense Mix — Last Year</h3>
+      <canvas id="chartExp" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- ── Operational KPIs ── -->
+  <div class="section-title">Operational KPIs — Mar 2026</div>
+  <div class="op-kpi-grid">
+    <div class="op-kpi-card">
+      <h4>Occupancy Rate</h4>
+      <div class="gauge-wrap"><canvas id="gaugeOcc"></canvas><div class="gauge-center" id="gOccVal"></div></div>
+      <div class="op-kpi-sub" id="gOccSub"></div>
+    </div>
+    <div class="op-kpi-card">
+      <h4>Collection Rate</h4>
+      <div class="gauge-wrap"><canvas id="gaugeColl"></canvas><div class="gauge-center" id="gCollVal"></div></div>
+      <div class="op-kpi-sub" id="gCollSub"></div>
+    </div>
+    <div class="op-kpi-card">
+      <h4>Delinquency Rate</h4>
+      <div class="gauge-wrap"><canvas id="gaugeDel"></canvas><div class="gauge-center" id="gDelVal"></div></div>
+      <div class="op-kpi-sub" id="gDelSub"></div>
+    </div>
+  </div>
+
+  <!-- ── Property Detail ── -->
+  <div class="section-title">Property Detail</div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('top')">Top Performers</div>
+    <div class="tab" onclick="switchTab('bot')">Bottom Performers</div>
+    <div class="tab" onclick="switchTab('all')">All Properties</div>
+  </div>
+  <div class="chart-card">
+    <div id="pane-top" class="tab-pane active">
+      <div class="table-wrap"><table id="tblTop"></table></div>
+    </div>
+    <div id="pane-bot" class="tab-pane">
+      <div class="table-wrap"><table id="tblBot"></table></div>
+    </div>
+    <div id="pane-all" class="tab-pane">
+      <div class="scroll-table"><table id="tblAll"></table></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>Generated April 02, 2026 &nbsp;|&nbsp; Data: Rent Manager API &nbsp;|&nbsp; Fiscal Year Apr 2025 – Mar 2026</footer>
+
+<script>
+
+const TOTALS = {"ly_income": 4431703.699999999, "ly_expenses": 3718346.1199999996, "ly_noi": 713357.5800000002, "ly_op_noi": 1401596.2400000002, "ly_capex": 688238.6599999999, "ly_principal": 713190.0, "ly_cfads": 167.5800000000745, "py_income": 4923018.66, "py_expenses": 4002537.3500000006, "py_noi": 920481.3100000003, "n_props": 91, "n_profitable": 60, "n_cfads_pos": 56, "ly_exp_ratio": 0.8390331059362115, "py_exp_ratio": 0.8130250211158047};
+const TOP10  = [{"prop": "YBP", "ly_income": 6994.0, "ly_expenses": -376934.0, "ly_noi": 383928.0, "py_noi": -52383.0, "yoy_noi": 436311.0, "principal": 0.0, "cfads": 383928.0}, {"prop": "CEN13", "ly_income": 254638.0, "ly_expenses": 108561.0, "ly_noi": 146077.0, "py_noi": 123836.0, "yoy_noi": 22241.0, "principal": 0.0, "cfads": 146077.0}, {"prop": "214EXC", "ly_income": 176791.0, "ly_expenses": 100218.0, "ly_noi": 76573.0, "py_noi": 125791.0, "yoy_noi": -49218.0, "principal": 0.0, "cfads": 76573.0}, {"prop": "17ALL", "ly_income": 252373.0, "ly_expenses": 180363.0, "ly_noi": 72009.0, "py_noi": 144455.0, "yoy_noi": -72446.0, "principal": 0.0, "cfads": 72009.0}, {"prop": "STA1-3SELF", "ly_income": 65270.0, "ly_expenses": 4627.0, "ly_noi": 60643.0, "py_noi": 57597.0, "yoy_noi": 3046.0, "principal": 0.0, "cfads": 60643.0}, {"prop": "826CHI", "ly_income": 79599.0, "ly_expenses": 51652.0, "ly_noi": 27947.0, "py_noi": 1984.0, "yoy_noi": 25963.0, "principal": 0.0, "cfads": 27947.0}, {"prop": "STJ83", "ly_income": 131817.0, "ly_expenses": 104524.0, "ly_noi": 27292.0, "py_noi": -12983.0, "yoy_noi": 40275.0, "principal": 0.0, "cfads": 27292.0}, {"prop": "RAC 346", "ly_income": 97495.0, "ly_expenses": 71440.0, "ly_noi": 26055.0, "py_noi": -4793.0, "yoy_noi": 30848.0, "principal": 0.0, "cfads": 26055.0}, {"prop": "STKM66", "ly_income": 50998.0, "ly_expenses": 25013.0, "ly_noi": 25985.0, "py_noi": -8807.0, "yoy_noi": 34792.0, "principal": 0.0, "cfads": 25985.0}, {"prop": "SHE89", "ly_income": 47904.0, "ly_expenses": 23012.0, "ly_noi": 24892.0, "py_noi": 12396.0, "yoy_noi": 12496.0, "principal": 0.0, "cfads": 24892.0}];
+const BOT10  = [{"prop": "STA1-3", "ly_income": 469034.0, "ly_expenses": 553692.0, "ly_noi": -84658.0, "py_noi": -95218.0, "yoy_noi": 10560.0, "principal": 0.0, "cfads": -84658.0}, {"prop": "COL800", "ly_income": 49012.0, "ly_expenses": 122165.0, "ly_noi": -73153.0, "py_noi": -20697.0, "yoy_noi": -52456.0, "principal": 0.0, "cfads": -73153.0}, {"prop": "MON30", "ly_income": 7358.0, "ly_expenses": 70614.0, "ly_noi": -63257.0, "py_noi": -1680.0, "yoy_noi": -61576.0, "principal": 0.0, "cfads": -63257.0}, {"prop": "MAR21", "ly_income": 8994.0, "ly_expenses": 63479.0, "ly_noi": -54485.0, "py_noi": 11252.0, "yoy_noi": -65736.0, "principal": 0.0, "cfads": -54485.0}, {"prop": "GRE62", "ly_income": 33094.0, "ly_expenses": 84818.0, "ly_noi": -51724.0, "py_noi": 9080.0, "yoy_noi": -60805.0, "principal": 0.0, "cfads": -51724.0}, {"prop": "NOR3", "ly_income": 214917.0, "ly_expenses": 259805.0, "ly_noi": -44887.0, "py_noi": 23171.0, "yoy_noi": -68059.0, "principal": 0.0, "cfads": -44887.0}, {"prop": "COM99", "ly_income": 31173.0, "ly_expenses": 75671.0, "ly_noi": -44497.0, "py_noi": -25167.0, "yoy_noi": -19330.0, "principal": 0.0, "cfads": -44497.0}, {"prop": "CAR411", "ly_income": 68833.0, "ly_expenses": 111945.0, "ly_noi": -43112.0, "py_noi": -3589.0, "yoy_noi": -39523.0, "principal": 0.0, "cfads": -43112.0}, {"prop": "TER48", "ly_income": 24012.0, "ly_expenses": 65967.0, "ly_noi": -41955.0, "py_noi": 9546.0, "yoy_noi": -51500.0, "principal": 0.0, "cfads": -41955.0}, {"prop": "WIN42", "ly_income": 13753.0, "ly_expenses": 49775.0, "ly_noi": -36022.0, "py_noi": -1757.0, "yoy_noi": -34265.0, "principal": 0.0, "cfads": -36022.0}];
+const INC_CATS = {"Rental Income": 4228080.540000001, "Mgmt / Fee Income": 354.2300000000008, "Labor Income": 16382.080000000002, "CRE Income": 99472.66, "Self-Storage": 66893.03, "Other Income": 20521.160000000003};
+const EXP_CATS = {"Mgmt Fees": 364686.7700000001, "Property Taxes": 380311.68, "Maintenance": 858142.0399999999, "Mortgage Interest": 521771.89, "Utilities": 462677.91, "Insurance": 205053.56, "Legal & Prof": 80379.31, "CapEx": 688238.6599999999, "CRE Expenses": 113054.69, "Licenses & Fees": 6707.85, "Admin & Other": 37321.76};
+const NOI_CHART = {"labels": ["YBP", "CEN13", "STA1-3", "214EXC", "COL800", "17ALL", "MON30", "STA1-3SELF", "MAR21", "GRE62", "NOR3", "COM99", "CAR411", "TER48", "WIN42", "826CHI", "STJ83", "TER56", "RAC 346", "STKM66"], "ly": [383928.0, 146077.0, -84658.0, 76573.0, -73153.0, 72009.0, -63257.0, 60643.0, -54485.0, -51724.0, -44887.0, -44497.0, -43112.0, -41955.0, -36022.0, 27947.0, 27292.0, -27235.0, 26055.0, 25985.0], "py": [-52383.0, 123836.0, -95218.0, 125791.0, -20697.0, 144455.0, -1680.0, 57597.0, 11252.0, 9080.0, 23171.0, -25167.0, -3589.0, 9546.0, -1757.0, 1984.0, -12983.0, 11994.0, -4793.0, -8807.0]};
+const WATERFALL = {"labels": ["Total Income", "Operating Exp", "Op NOI", "CapEx", "NOI", "Mortgage Principal", "Cash Flow"], "values": [4431704.0, -3030107.0, 1401596.0, -688239.0, 713358.0, -713190.0, 168.0]};
+const ALL_PROPS = [{"prop": "YBP", "ly_income": 6994.0, "ly_expenses": -376934.0, "ly_noi": 383928.0, "py_noi": -52383.0, "yoy_noi": 436311.0, "principal": 0.0, "cfads": 383928.0, "capex": 225.0}, {"prop": "CEN13", "ly_income": 254638.0, "ly_expenses": 108561.0, "ly_noi": 146077.0, "py_noi": 123836.0, "yoy_noi": 22241.0, "principal": 0.0, "cfads": 146077.0, "capex": 0.0}, {"prop": "214EXC", "ly_income": 176791.0, "ly_expenses": 100218.0, "ly_noi": 76573.0, "py_noi": 125791.0, "yoy_noi": -49218.0, "principal": 0.0, "cfads": 76573.0, "capex": 4072.0}, {"prop": "17ALL", "ly_income": 252373.0, "ly_expenses": 180363.0, "ly_noi": 72009.0, "py_noi": 144455.0, "yoy_noi": -72446.0, "principal": 0.0, "cfads": 72009.0, "capex": 48307.0}, {"prop": "STA1-3SELF", "ly_income": 65270.0, "ly_expenses": 4627.0, "ly_noi": 60643.0, "py_noi": 57597.0, "yoy_noi": 3046.0, "principal": 0.0, "cfads": 60643.0, "capex": 900.0}, {"prop": "826CHI", "ly_income": 79599.0, "ly_expenses": 51652.0, "ly_noi": 27947.0, "py_noi": 1984.0, "yoy_noi": 25963.0, "principal": 0.0, "cfads": 27947.0, "capex": 8844.0}, {"prop": "STJ83", "ly_income": 131817.0, "ly_expenses": 104524.0, "ly_noi": 27292.0, "py_noi": -12983.0, "yoy_noi": 40275.0, "principal": 0.0, "cfads": 27292.0, "capex": 16974.0}, {"prop": "RAC 346", "ly_income": 97495.0, "ly_expenses": 71440.0, "ly_noi": 26055.0, "py_noi": -4793.0, "yoy_noi": 30848.0, "principal": 0.0, "cfads": 26055.0, "capex": 6833.0}, {"prop": "STKM66", "ly_income": 50998.0, "ly_expenses": 25013.0, "ly_noi": 25985.0, "py_noi": -8807.0, "yoy_noi": 34792.0, "principal": 0.0, "cfads": 25985.0, "capex": 0.0}, {"prop": "SHE89", "ly_income": 47904.0, "ly_expenses": 23012.0, "ly_noi": 24892.0, "py_noi": 12396.0, "yoy_noi": 12496.0, "principal": 0.0, "cfads": 24892.0, "capex": 200.0}, {"prop": "MAI54", "ly_income": 136007.0, "ly_expenses": 112677.0, "ly_noi": 23330.0, "py_noi": 12937.0, "yoy_noi": 10393.0, "principal": 315582.0, "cfads": -292252.0, "capex": 550.0}, {"prop": "WLM110", "ly_income": 62695.0, "ly_expenses": 39466.0, "ly_noi": 23229.0, "py_noi": -5437.0, "yoy_noi": 28666.0, "principal": 0.0, "cfads": 23229.0, "capex": 700.0}, {"prop": "CEN223-225", "ly_income": 63593.0, "ly_expenses": 43323.0, "ly_noi": 20270.0, "py_noi": 21008.0, "yoy_noi": -738.0, "principal": 0.0, "cfads": 20270.0, "capex": 950.0}, {"prop": "ORA 35", "ly_income": 38305.0, "ly_expenses": 18212.0, "ly_noi": 20093.0, "py_noi": 11289.0, "yoy_noi": 8804.0, "principal": 0.0, "cfads": 20093.0, "capex": 0.0}, {"prop": "BCH34", "ly_income": 33029.0, "ly_expenses": 13011.0, "ly_noi": 20018.0, "py_noi": 17145.0, "yoy_noi": 2873.0, "principal": 0.0, "cfads": 20018.0, "capex": 0.0}, {"prop": "SPR50", "ly_income": 79638.0, "ly_expenses": 60457.0, "ly_noi": 19181.0, "py_noi": 17155.0, "yoy_noi": 2026.0, "principal": 0.0, "cfads": 19181.0, "capex": 525.0}, {"prop": "UNI741", "ly_income": 57565.0, "ly_expenses": 38521.0, "ly_noi": 19044.0, "py_noi": 24605.0, "yoy_noi": -5561.0, "principal": 0.0, "cfads": 19044.0, "capex": 1000.0}, {"prop": "LOR31", "ly_income": 33078.0, "ly_expenses": 14294.0, "ly_noi": 18784.0, "py_noi": 15328.0, "yoy_noi": 3456.0, "principal": 0.0, "cfads": 18784.0, "capex": 0.0}, {"prop": "BKS123", "ly_income": 49049.0, "ly_expenses": 30318.0, "ly_noi": 18731.0, "py_noi": 10010.0, "yoy_noi": 8720.0, "principal": 0.0, "cfads": 18731.0, "capex": 525.0}, {"prop": "JOS51", "ly_income": 30102.0, "ly_expenses": 11521.0, "ly_noi": 18581.0, "py_noi": -11077.0, "yoy_noi": 29658.0, "principal": 0.0, "cfads": 18581.0, "capex": 950.0}, {"prop": "OKL147", "ly_income": 31824.0, "ly_expenses": 14363.0, "ly_noi": 17461.0, "py_noi": 11273.0, "yoy_noi": 6188.0, "principal": 0.0, "cfads": 17461.0, "capex": 0.0}, {"prop": "EAS24", "ly_income": 66097.0, "ly_expenses": 48993.0, "ly_noi": 17104.0, "py_noi": 15581.0, "yoy_noi": 1523.0, "principal": 0.0, "cfads": 17104.0, "capex": 7700.0}, {"prop": "MEL32", "ly_income": 29001.0, "ly_expenses": 12569.0, "ly_noi": 16432.0, "py_noi": 11411.0, "yoy_noi": 5020.0, "principal": 0.0, "cfads": 16432.0, "capex": 0.0}, {"prop": "HAM291", "ly_income": 35692.0, "ly_expenses": 19992.0, "ly_noi": 15700.0, "py_noi": -30793.0, "yoy_noi": 46493.0, "principal": 0.0, "cfads": 15700.0, "capex": 0.0}, {"prop": "DAL60", "ly_income": 25200.0, "ly_expenses": 9705.0, "ly_noi": 15494.0, "py_noi": -20443.0, "yoy_noi": 35937.0, "principal": 0.0, "cfads": 15494.0, "capex": 0.0}, {"prop": "MON26", "ly_income": 27598.0, "ly_expenses": 12751.0, "ly_noi": 14847.0, "py_noi": 10350.0, "yoy_noi": 4497.0, "principal": 0.0, "cfads": 14847.0, "capex": 0.0}, {"prop": "HOL65", "ly_income": 68107.0, "ly_expenses": 54022.0, "ly_noi": 14085.0, "py_noi": 9397.0, "yoy_noi": 4689.0, "principal": 0.0, "cfads": 14085.0, "capex": 10996.0}, {"prop": "HLD11", "ly_income": 27980.0, "ly_expenses": 13996.0, "ly_noi": 13984.0, "py_noi": 12039.0, "yoy_noi": 1946.0, "principal": 0.0, "cfads": 13984.0, "capex": 0.0}, {"prop": "PNE10", "ly_income": 25090.0, "ly_expenses": 11337.0, "ly_noi": 13753.0, "py_noi": 9096.0, "yoy_noi": 4657.0, "principal": 0.0, "cfads": 13753.0, "capex": 535.0}, {"prop": "CEN424", "ly_income": 24180.0, "ly_expenses": 10898.0, "ly_noi": 13282.0, "py_noi": 5602.0, "yoy_noi": 7680.0, "principal": 0.0, "cfads": 13282.0, "capex": 0.0}, {"prop": "SOU 220", "ly_income": 22394.0, "ly_expenses": 9321.0, "ly_noi": 13073.0, "py_noi": 19727.0, "yoy_noi": -6654.0, "principal": 0.0, "cfads": 13073.0, "capex": 265.0}, {"prop": "EUC42", "ly_income": 36133.0, "ly_expenses": 23060.0, "ly_noi": 13073.0, "py_noi": -594.0, "yoy_noi": 13667.0, "principal": 0.0, "cfads": 13073.0, "capex": 0.0}, {"prop": "MAR89", "ly_income": 39834.0, "ly_expenses": 27485.0, "ly_noi": 12349.0, "py_noi": 16382.0, "yoy_noi": -4033.0, "principal": 0.0, "cfads": 12349.0, "capex": 735.0}, {"prop": "ELE90", "ly_income": 23398.0, "ly_expenses": 11355.0, "ly_noi": 12044.0, "py_noi": 8769.0, "yoy_noi": 3275.0, "principal": 0.0, "cfads": 12044.0, "capex": 0.0}, {"prop": "LON130", "ly_income": 21600.0, "ly_expenses": 9687.0, "ly_noi": 11913.0, "py_noi": 14182.0, "yoy_noi": -2268.0, "principal": 0.0, "cfads": 11913.0, "capex": 250.0}, {"prop": "FLO 35", "ly_income": 23651.0, "ly_expenses": 12142.0, "ly_noi": 11509.0, "py_noi": 12096.0, "yoy_noi": -587.0, "principal": 0.0, "cfads": 11509.0, "capex": 0.0}, {"prop": "CEN100", "ly_income": 56971.0, "ly_expenses": 46016.0, "ly_noi": 10955.0, "py_noi": 3609.0, "yoy_noi": 7346.0, "principal": 0.0, "cfads": 10955.0, "capex": 2969.0}, {"prop": "DUN184", "ly_income": 22199.0, "ly_expenses": 11475.0, "ly_noi": 10724.0, "py_noi": 8750.0, "yoy_noi": 1975.0, "principal": 0.0, "cfads": 10724.0, "capex": 800.0}, {"prop": "MTV 158", "ly_income": 24400.0, "ly_expenses": 13711.0, "ly_noi": 10689.0, "py_noi": 5047.0, "yoy_noi": 5641.0, "principal": 0.0, "cfads": 10689.0, "capex": 276.0}, {"prop": "LOR30", "ly_income": 47629.0, "ly_expenses": 37212.0, "ly_noi": 10418.0, "py_noi": 30393.0, "yoy_noi": -19975.0, "principal": 0.0, "cfads": 10418.0, "capex": 6615.0}, {"prop": "FIE 49", "ly_income": 19325.0, "ly_expenses": 9194.0, "ly_noi": 10131.0, "py_noi": 4510.0, "yoy_noi": 5620.0, "principal": 0.0, "cfads": 10131.0, "capex": 0.0}, {"prop": "LRL27", "ly_income": 39280.0, "ly_expenses": 29227.0, "ly_noi": 10054.0, "py_noi": 803.0, "yoy_noi": 9251.0, "principal": 0.0, "cfads": 10054.0, "capex": 1962.0}, {"prop": "WALL24", "ly_income": 17650.0, "ly_expenses": 8732.0, "ly_noi": 8917.0, "py_noi": 5050.0, "yoy_noi": 3867.0, "principal": 0.0, "cfads": 8917.0, "capex": 0.0}, {"prop": "BAB579", "ly_income": 22598.0, "ly_expenses": 14697.0, "ly_noi": 7902.0, "py_noi": 8171.0, "yoy_noi": -269.0, "principal": 171357.0, "cfads": -163455.0, "capex": 0.0}, {"prop": "WIL257", "ly_income": 39510.0, "ly_expenses": 31773.0, "ly_noi": 7736.0, "py_noi": 13940.0, "yoy_noi": -6204.0, "principal": 0.0, "cfads": 7736.0, "capex": 2950.0}, {"prop": "BRU117", "ly_income": 32128.0, "ly_expenses": 24577.0, "ly_noi": 7551.0, "py_noi": 12105.0, "yoy_noi": -4554.0, "principal": 0.0, "cfads": 7551.0, "capex": 0.0}, {"prop": "NOT370", "ly_income": 18599.0, "ly_expenses": 11430.0, "ly_noi": 7169.0, "py_noi": 8801.0, "yoy_noi": -1633.0, "principal": 0.0, "cfads": 7169.0, "capex": 523.0}, {"prop": "HUN30", "ly_income": 32560.0, "ly_expenses": 26596.0, "ly_noi": 5963.0, "py_noi": -46591.0, "yoy_noi": 52554.0, "principal": 0.0, "cfads": 5963.0, "capex": 0.0}, {"prop": "FNT62", "ly_income": 18799.0, "ly_expenses": 14024.0, "ly_noi": 4775.0, "py_noi": 8664.0, "yoy_noi": -3889.0, "principal": 0.0, "cfads": 4775.0, "capex": 0.0}, {"prop": "PIN100", "ly_income": 18000.0, "ly_expenses": 13312.0, "ly_noi": 4688.0, "py_noi": 5098.0, "yoy_noi": -410.0, "principal": 0.0, "cfads": 4688.0, "capex": 3650.0}, {"prop": "HLD119", "ly_income": 19800.0, "ly_expenses": 15539.0, "ly_noi": 4261.0, "py_noi": -11341.0, "yoy_noi": 15602.0, "principal": 0.0, "cfads": 4261.0, "capex": 0.0}, {"prop": "ROC85", "ly_income": 17674.0, "ly_expenses": 13700.0, "ly_noi": 3974.0, "py_noi": 5089.0, "yoy_noi": -1114.0, "principal": 0.0, "cfads": 3974.0, "capex": 0.0}, {"prop": "WAI52", "ly_income": 51227.0, "ly_expenses": 47674.0, "ly_noi": 3553.0, "py_noi": -36594.0, "yoy_noi": 40147.0, "principal": 0.0, "cfads": 3553.0, "capex": 12037.0}, {"prop": "15W", "ly_income": 29938.0, "ly_expenses": 26404.0, "ly_noi": 3533.0, "py_noi": 3340.0, "yoy_noi": 193.0, "principal": 0.0, "cfads": 3533.0, "capex": 250.0}, {"prop": "ROL", "ly_income": 16823.0, "ly_expenses": 13421.0, "ly_noi": 3403.0, "py_noi": 11117.0, "yoy_noi": -7715.0, "principal": 0.0, "cfads": 3403.0, "capex": 0.0}, {"prop": "FRE5", "ly_income": 19386.0, "ly_expenses": 16280.0, "ly_noi": 3106.0, "py_noi": 11412.0, "yoy_noi": -8306.0, "principal": 167061.0, "cfads": -163955.0, "capex": 588.0}, {"prop": "MRN180", "ly_income": 27099.0, "ly_expenses": 25174.0, "ly_noi": 1925.0, "py_noi": 8540.0, "yoy_noi": -6615.0, "principal": 0.0, "cfads": 1925.0, "capex": 0.0}, {"prop": "THI64", "ly_income": 57638.0, "ly_expenses": 56158.0, "ly_noi": 1480.0, "py_noi": 1949.0, "yoy_noi": -469.0, "principal": 59190.0, "cfads": -57710.0, "capex": 12973.0}, {"prop": "MBL37", "ly_income": 53850.0, "ly_expenses": 52599.0, "ly_noi": 1251.0, "py_noi": -81016.0, "yoy_noi": 82267.0, "principal": 0.0, "cfads": 1251.0, "capex": 8514.0}, {"prop": "BTN37", "ly_income": 27098.0, "ly_expenses": 26328.0, "ly_noi": 770.0, "py_noi": 12310.0, "yoy_noi": -11539.0, "principal": 0.0, "cfads": 770.0, "capex": 0.0}, {"prop": "CAR46", "ly_income": 0.0, "ly_expenses": 0.0, "ly_noi": 0.0, "py_noi": 14311.0, "yoy_noi": -14311.0, "principal": 0.0, "cfads": 0.0, "capex": 0.0}, {"prop": "ECR-NEW", "ly_income": 0.0, "ly_expenses": 100.0, "ly_noi": -100.0, "py_noi": -11320.0, "yoy_noi": 11220.0, "principal": 0.0, "cfads": -100.0, "capex": 0.0}, {"prop": "STA13", "ly_income": 225.0, "ly_expenses": 831.0, "ly_noi": -606.0, "py_noi": -840.0, "yoy_noi": 234.0, "principal": 0.0, "cfads": -606.0, "capex": 0.0}, {"prop": "PAR42", "ly_income": 0.0, "ly_expenses": 757.0, "ly_noi": -757.0, "py_noi": -1119.0, "yoy_noi": 362.0, "principal": 0.0, "cfads": -757.0, "capex": 0.0}, {"prop": "MAS37", "ly_income": 0.0, "ly_expenses": 1708.0, "ly_noi": -1708.0, "py_noi": 245529.0, "yoy_noi": -247237.0, "principal": 0.0, "cfads": -1708.0, "capex": 0.0}, {"prop": "OAK275", "ly_income": 31134.0, "ly_expenses": 33655.0, "ly_noi": -2521.0, "py_noi": 19887.0, "yoy_noi": -22408.0, "principal": 0.0, "cfads": -2521.0, "capex": 10363.0}, {"prop": "FRO133", "ly_income": 0.0, "ly_expenses": 2853.0, "ly_noi": -2853.0, "py_noi": 218774.0, "yoy_noi": -221627.0, "principal": 0.0, "cfads": -2853.0, "capex": 0.0}, {"prop": "CAR77", "ly_income": 285.0, "ly_expenses": 4076.0, "ly_noi": -3791.0, "py_noi": -9361.0, "yoy_noi": 5570.0, "principal": 0.0, "cfads": -3791.0, "capex": 0.0}, {"prop": "WEL62", "ly_income": 34715.0, "ly_expenses": 40360.0, "ly_noi": -5646.0, "py_noi": 1419.0, "yoy_noi": -7065.0, "principal": 0.0, "cfads": -5646.0, "capex": 10738.0}, {"prop": "OZ", "ly_income": 0.0, "ly_expenses": 6351.0, "ly_noi": -6351.0, "py_noi": 41512.0, "yoy_noi": -47863.0, "principal": 0.0, "cfads": -6351.0, "capex": 0.0}, {"prop": "SHE73", "ly_income": 34009.0, "ly_expenses": 41134.0, "ly_noi": -7125.0, "py_noi": -10264.0, "yoy_noi": 3138.0, "principal": 0.0, "cfads": -7125.0, "capex": 872.0}, {"prop": "FEN3", "ly_income": 46585.0, "ly_expenses": 54082.0, "ly_noi": -7497.0, "py_noi": -6786.0, "yoy_noi": -712.0, "principal": 0.0, "cfads": -7497.0, "capex": 19275.0}, {"prop": "CRE21", "ly_income": 29824.0, "ly_expenses": 38742.0, "ly_noi": -8918.0, "py_noi": 9335.0, "yoy_noi": -18252.0, "principal": 0.0, "cfads": -8918.0, "capex": 13549.0}, {"prop": "OAK279", "ly_income": 24563.0, "ly_expenses": 37687.0, "ly_noi": -13123.0, "py_noi": 14586.0, "yoy_noi": -27709.0, "principal": 0.0, "cfads": -13123.0, "capex": 10750.0}, {"prop": "ELM21-25", "ly_income": 39012.0, "ly_expenses": 52275.0, "ly_noi": -13264.0, "py_noi": -17673.0, "yoy_noi": 4410.0, "principal": 0.0, "cfads": -13264.0, "capex": 6151.0}, {"prop": "AVD65", "ly_income": 22199.0, "ly_expenses": 36482.0, "ly_noi": -14283.0, "py_noi": 10947.0, "yoy_noi": -25230.0, "principal": 0.0, "cfads": -14283.0, "capex": 17137.0}, {"prop": "JAB12", "ly_income": 137667.0, "ly_expenses": 153266.0, "ly_noi": -15599.0, "py_noi": -28576.0, "yoy_noi": 12977.0, "principal": 0.0, "cfads": -15599.0, "capex": 12925.0}, {"prop": "STJ81", "ly_income": 26261.0, "ly_expenses": 42200.0, "ly_noi": -15939.0, "py_noi": -23513.0, "yoy_noi": 7574.0, "principal": 0.0, "cfads": -15939.0, "capex": 15986.0}, {"prop": "CL ", "ly_income": 991.0, "ly_expenses": 21792.0, "ly_noi": -20801.0, "py_noi": -51231.0, "yoy_noi": 30430.0, "principal": 0.0, "cfads": -20801.0, "capex": 0.0}, {"prop": "FLO116", "ly_income": 40615.0, "ly_expenses": 65087.0, "ly_noi": -24472.0, "py_noi": -9362.0, "yoy_noi": -15110.0, "principal": 0.0, "cfads": -24472.0, "capex": 18212.0}, {"prop": "TER56", "ly_income": 38541.0, "ly_expenses": 65776.0, "ly_noi": -27235.0, "py_noi": 11994.0, "yoy_noi": -39229.0, "principal": 0.0, "cfads": -27235.0, "capex": 28091.0}, {"prop": "WIN42", "ly_income": 13753.0, "ly_expenses": 49775.0, "ly_noi": -36022.0, "py_noi": -1757.0, "yoy_noi": -34265.0, "principal": 0.0, "cfads": -36022.0, "capex": 13882.0}, {"prop": "TER48", "ly_income": 24012.0, "ly_expenses": 65967.0, "ly_noi": -41955.0, "py_noi": 9546.0, "yoy_noi": -51500.0, "principal": 0.0, "cfads": -41955.0, "capex": 26208.0}, {"prop": "CAR411", "ly_income": 68833.0, "ly_expenses": 111945.0, "ly_noi": -43112.0, "py_noi": -3589.0, "yoy_noi": -39523.0, "principal": 0.0, "cfads": -43112.0, "capex": 51148.0}, {"prop": "COM99", "ly_income": 31173.0, "ly_expenses": 75671.0, "ly_noi": -44497.0, "py_noi": -25167.0, "yoy_noi": -19330.0, "principal": 0.0, "cfads": -44497.0, "capex": 30221.0}, {"prop": "NOR3", "ly_income": 214917.0, "ly_expenses": 259805.0, "ly_noi": -44887.0, "py_noi": 23171.0, "yoy_noi": -68059.0, "principal": 0.0, "cfads": -44887.0, "capex": 50245.0}, {"prop": "GRE62", "ly_income": 33094.0, "ly_expenses": 84818.0, "ly_noi": -51724.0, "py_noi": 9080.0, "yoy_noi": -60805.0, "principal": 0.0, "cfads": -51724.0, "capex": 32300.0}, {"prop": "MAR21", "ly_income": 8994.0, "ly_expenses": 63479.0, "ly_noi": -54485.0, "py_noi": 11252.0, "yoy_noi": -65736.0, "principal": 0.0, "cfads": -54485.0, "capex": 19471.0}, {"prop": "MON30", "ly_income": 7358.0, "ly_expenses": 70614.0, "ly_noi": -63257.0, "py_noi": -1680.0, "yoy_noi": -61576.0, "principal": 0.0, "cfads": -63257.0, "capex": 33001.0}, {"prop": "COL800", "ly_income": 49012.0, "ly_expenses": 122165.0, "ly_noi": -73153.0, "py_noi": -20697.0, "yoy_noi": -52456.0, "principal": 0.0, "cfads": -73153.0, "capex": 49322.0}, {"prop": "STA1-3", "ly_income": 469034.0, "ly_expenses": 553692.0, "ly_noi": -84658.0, "py_noi": -95218.0, "yoy_noi": 10560.0, "principal": 0.0, "cfads": -84658.0, "capex": 52250.0}];
+const OP_KPIS  = {"vacancy_rate": 0.837, "collection_rate": 0.9405, "delinquency_rate": 0.0595, "occupied_units": 55, "total_units": 338, "total_billed": 9477646.4, "total_collected": 8913646.4, "outstanding_balance": 564000.0, "kpi_as_of": "Mar 2026"};
+
+
+// ── Formatters ────────────────────────────────────────────────────────────────
+function fmt(v, dec=0) {
+  if(v===null||v===undefined) return '—';
+  const abs = Math.abs(v);
+  const str = abs.toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+  return (v<0?'('+str+')':str);
+}
+function fmtK(v) {
+  if(Math.abs(v)>=1000000) return (v/1000000).toFixed(1)+'M';
+  if(Math.abs(v)>=1000) return (v/1000).toFixed(0)+'K';
+  return v.toFixed(0);
+}
+function fmtPct(v) { return (v*100).toFixed(1)+'%'; }
+function pct_class(v) { return v>=0?'pos':'neg'; }
+
+// ── Header badges ──────────────────────────────────────────────────────────────
+document.getElementById('hb-props').textContent  = TOTALS.n_props + ' Active Properties';
+document.getElementById('hb-noi').textContent    = 'LY NOI: $' + fmtK(TOTALS.ly_noi);
+document.getElementById('hb-cfads').textContent  = 'Cash Flow After DS: $' + fmtK(TOTALS.ly_cfads);
+
+// ── KPI Grid ──────────────────────────────────────────────────────────────────
+const kpis = [
+  { label:'Total Income',    val:TOTALS.ly_income,   pyval:TOTALS.py_income,   cls:'',      icon:'💰' },
+  { label:'Total Expenses',  val:TOTALS.ly_expenses, pyval:TOTALS.py_expenses, cls:'red',   icon:'📋' },
+  { label:'Operating NOI',   val:TOTALS.ly_op_noi,   pyval:null,               cls:'green', icon:'📈' },
+  { label:'CapEx',           val:TOTALS.ly_capex,    pyval:TOTALS.py_capex,    cls:'orange',icon:'🔧' },
+  { label:'NOI After CapEx', val:TOTALS.ly_noi,      pyval:TOTALS.py_noi,      cls:'green', icon:'📊' },
+  { label:'Mortgage Principal',val:TOTALS.ly_principal,pyval:null,             cls:'gold',  icon:'🏦' },
+  { label:'Cash Flow After DS',val:TOTALS.ly_cfads,  pyval:null,               cls:'green', icon:'💵' },
+  { label:'Expense Ratio',   val:TOTALS.ly_exp_ratio,pyval:TOTALS.py_exp_ratio,cls:'',      icon:'⚖️', isPct:true },
+];
+
+const kg = document.getElementById('kpi-grid');
+kpis.forEach(k => {
+  const div = document.createElement('div');
+  div.className = 'kpi-card ' + k.cls;
+  let val_str = k.isPct ? fmtPct(k.val) : ('$' + fmt(k.val));
+  let delta_html = '';
+  if(k.pyval !== null) {
+    const delta = k.val - k.pyval;
+    const pct   = k.pyval !== 0 ? delta/Math.abs(k.pyval)*100 : 0;
+    const up    = delta >= 0;
+    // For expenses: lower is better
+    const good  = (k.label.includes('Expense') && !k.label.includes('NOI')) ? !up : up;
+    const dCls  = good ? 'up' : 'down';
+    const dSign = up ? '+' : '';
+    const dStr  = k.isPct ? dSign+fmtPct(delta) : (up?'+':'')+' $'+fmtK(delta);
+    delta_html = `<div class="kpi-delta ${dCls}">${dStr} (${dSign}${pct.toFixed(1)}%) vs PY</div>`;
+  }
+  div.innerHTML = `
+    <div class="kpi-label">${k.icon} ${k.label}</div>
+    <div class="kpi-value">${val_str}</div>
+    <div class="kpi-sub">Last Year (Apr 25 – Mar 26)</div>
+    ${delta_html}
+  `;
+  kg.appendChild(div);
+});
+
+// ── NOI Bar Chart ─────────────────────────────────────────────────────────────
+new Chart(document.getElementById('chartNOI'), {
+  type: 'bar',
+  data: {
+    labels: NOI_CHART.labels,
+    datasets: [
+      { label:'Last Year NOI',  data: NOI_CHART.ly, backgroundColor: NOI_CHART.ly.map(v=>v>=0?'#2F5496BB':'#E05252BB') },
+      { label:'Prior Year NOI', data: NOI_CHART.py, backgroundColor: NOI_CHART.py.map(v=>v>=0?'#70AD4777':'#F4A46077') },
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{position:'top',labels:{font:{size:11}}}, tooltip:{callbacks:{label:ctx=>'$'+fmt(ctx.raw)}} },
+    scales:{
+      x:{ticks:{font:{size:10}}},
+      y:{ticks:{callback:v=>'$'+fmtK(v),font:{size:10}},grid:{color:'#EEF2FA'}}
+    }
+  }
+});
+
+// ── Waterfall ─────────────────────────────────────────────────────────────────
+const wfMax = Math.max(...WATERFALL.values.map(Math.abs));
+const wfColors = ['#2F5496','#E05252','#70AD47','#E05252','#C9A227','#E05252','#1F3864'];
+const wfNames = WATERFALL.labels;
+const wfDiv = document.getElementById('waterfall');
+WATERFALL.values.forEach((v,i) => {
+  const pct = Math.abs(v)/wfMax*100;
+  const color = wfColors[i];
+  const sign  = v>=0 ? '+' : '';
+  wfDiv.innerHTML += `
+    <div class="wf-row">
+      <div class="wf-label">${wfNames[i]}</div>
+      <div class="wf-bar-bg"><div class="wf-bar" style="width:${pct}%;background:${color};"></div></div>
+      <div class="wf-val ${v>=0?'pos':'neg'}">${v>=0?'$':''}${v<0?'($'+fmtK(-v)+')':'$'+fmtK(v)}</div>
+    </div>`;
+});
+
+// ── Doughnut charts ───────────────────────────────────────────────────────────
+const PALETTE = ['#1F3864','#2F5496','#4472C4','#70AD47','#ED7D31','#C9A227','#E05252','#BDD7EE','#A9D18E','#F4B942','#9DC3E6','#5A7FC0'];
+
+function makeDoughnut(id, dataObj) {
+  const labels = Object.keys(dataObj);
+  const values = Object.values(dataObj);
+  new Chart(document.getElementById(id), {
+    type:'doughnut',
+    data:{
+      labels,
+      datasets:[{ data:values, backgroundColor:PALETTE.slice(0,labels.length), borderWidth:2 }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'right',labels:{font:{size:10},boxWidth:12,padding:8}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.label}: $${fmt(ctx.raw)} (${fmtPct(ctx.raw/values.reduce((a,b)=>a+b,0))})`}}
+      }
+    }
+  });
+}
+makeDoughnut('chartInc', INC_CATS);
+makeDoughnut('chartExp', EXP_CATS);
+
+// ── Gauge charts ──────────────────────────────────────────────────────────────
+function makeGauge(id, valId, subId, value, label, subText, goodThreshold, lowerIsBetter=false) {
+  const good = lowerIsBetter ? value <= goodThreshold : value >= goodThreshold;
+  const color = good ? '#70AD47' : (lowerIsBetter ? (value<=goodThreshold*1.5?'#ED7D31':'#E05252') : '#E05252');
+  new Chart(document.getElementById(id), {
+    type:'doughnut',
+    data:{
+      datasets:[{ data:[value,1-value], backgroundColor:[color,'#EEF2FA'], borderWidth:0, circumference:180, rotation:270 }]
+    },
+    options:{ responsive:false, plugins:{legend:{display:false},tooltip:{enabled:false}} }
+  });
+  document.getElementById(valId).textContent = fmtPct(value);
+  document.getElementById(valId).style.color  = color;
+  document.getElementById(subId).textContent  = subText;
+}
+
+makeGauge('gaugeOcc',  'gOccVal',  'gOccSub',
+  OP_KPIS.vacancy_rate, 'Occupancy', `${OP_KPIS.occupied_units} / ${OP_KPIS.total_units} units`, 0.90);
+makeGauge('gaugeColl', 'gCollVal', 'gCollSub',
+  OP_KPIS.collection_rate, 'Collection', `$${fmt(OP_KPIS.total_collected)} / $$${fmt(OP_KPIS.total_billed)}`, 0.95);
+makeGauge('gaugeDel',  'gDelVal',  'gDelSub',
+  OP_KPIS.delinquency_rate, 'Delinquency', `$$${fmt(OP_KPIS.outstanding_balance)} outstanding`, 0.05, true);
+
+// ── Tables ────────────────────────────────────────────────────────────────────
+const THEAD = `<thead><tr>
+  <th style="text-align:left">Property</th>
+  <th>LY Income</th><th>LY Expenses</th><th>LY NOI</th><th>PY NOI</th>
+  <th>YoY NOI</th><th>Mortgage Prin.</th><th>Cash Flow After DS</th>
+</tr></thead>`;
+
+function buildTable(rows, tblId) {
+  const t = document.getElementById(tblId);
+  let html = THEAD + '<tbody>';
+  rows.forEach(r => {
+    html += `<tr>
+      <td>${r.prop}</td>
+      <td>$${fmt(r.ly_income)}</td>
+      <td>$${fmt(r.ly_expenses)}</td>
+      <td class="${pct_class(r.ly_noi)}">$${fmt(r.ly_noi)}</td>
+      <td class="${pct_class(r.py_noi)}">$${fmt(r.py_noi)}</td>
+      <td class="${pct_class(r.yoy_noi)}">${r.yoy_noi>=0?'+':''}$${fmt(r.yoy_noi)}</td>
+      <td>${r.principal>0?'$'+fmt(r.principal):'—'}</td>
+      <td class="${pct_class(r.cfads)}">$${fmt(r.cfads)}</td>
+    </tr>`;
+  });
+  html += '</tbody>';
+  t.innerHTML = html;
+}
+
+buildTable(TOP10, 'tblTop');
+buildTable(BOT10, 'tblBot');
+buildTable(ALL_PROPS, 'tblAll');
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const names = ['top','bot','all'];
+    t.classList.toggle('active', names[i]===name);
+  });
+  document.querySelectorAll('.tab-pane').forEach(p => {
+    p.classList.toggle('active', p.id==='pane-'+name);
+  });
+}
+</script>
+</body>
+</html>
