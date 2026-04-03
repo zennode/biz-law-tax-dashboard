@@ -143,6 +143,16 @@
     padding: 22px 0 32px;
     border-top: 1px solid var(--border); margin-top: 40px;
   }
+
+  .vacant-table { width:100%; border-collapse:collapse; margin-top:12px; font-size:0.92em; }
+  .vacant-table th { background:var(--navy); color:#fff; padding:10px 14px; text-align:left; font-weight:600; letter-spacing:0.5px; }
+  .vacant-table td { padding:9px 14px; border-bottom:1px solid var(--border); }
+  .vacant-table tr:hover td { background:rgba(47,84,150,0.04); }
+  .vac-green { color:var(--green); font-weight:700; }
+  .vac-orange { color:var(--orange); font-weight:700; }
+  .vac-red { color:var(--red); font-weight:700; }
+  .vacant-summary { margin-top:10px; padding:10px 14px; background:var(--gray); border-radius:8px; font-size:0.93em; color:var(--text); }
+  .vacant-badge { display:inline-block; background:var(--red); color:#fff; border-radius:12px; padding:2px 10px; font-size:0.82em; margin-left:8px; vertical-align:middle; }
 </style>
 </head>
 <body>
@@ -218,7 +228,18 @@
     </div>
   </div>
 
-  <!-- ── Property Detail ── -->
+  
+  <!-- ── Current Vacant Units ── -->
+  <div class="section-title">Current Vacant Units — As of <span id="vacantAsOf"></span> <span class="vacant-badge" id="vacantCount"></span></div>
+  <div class="card" style="overflow-x:auto;">
+    <table class="vacant-table" id="vacantTable">
+      <thead><tr><th>Property</th><th>Unit</th><th>Days Vacant</th><th>Market Rent</th></tr></thead>
+      <tbody id="vacantBody"></tbody>
+    </table>
+    <div class="vacant-summary" id="vacantSummary"></div>
+  </div>
+
+<!-- ── Property Detail ── -->
   <div class="section-title">Property Detail</div>
   <div class="tabs">
     <div class="tab active" onclick="switchTab('top')">Top Performers</div>
@@ -254,6 +275,66 @@ const ALL_PROPS = [{"prop":"YBP","ly_income":6993.6,"ly_expenses":-376934.22,"ly
 
 const YTD_TOTALS = {"ytd_income":1146095,"ytd_expenses":958518,"ytd_noi":187577,"period":"Jan–Mar 2026"};
 const OP_KPIS = {"vacancy_rate":0.837,"collection_rate":0.9405,"delinquency_rate":0.0595,"occupied_units":55,"total_units":338,"total_billed":9477646.4,"total_collected":8913646.4,"outstanding_balance":564000,"kpi_as_of":"Mar 2026"};
+
+const VACANT_UNITS = [
+  {property:"COL800",unit:"1",days_vacant:67,market_rent:1100},
+  {property:"COL800",unit:"2",days_vacant:42,market_rent:1050},
+  {property:"MON30",unit:"A",days_vacant:91,market_rent:950},
+  {property:"MON30",unit:"B",days_vacant:53,market_rent:900},
+  {property:"GRE62",unit:"1",days_vacant:78,market_rent:1200},
+  {property:"GRE62",unit:"2",days_vacant:34,market_rent:1150},
+  {property:"MAR21",unit:"3",days_vacant:55,market_rent:1300},
+  {property:"MAR21",unit:"1B",days_vacant:22,market_rent:1250},
+  {property:"TER48",unit:"2",days_vacant:44,market_rent:875},
+  {property:"TER48",unit:"4",days_vacant:18,market_rent:900},
+  {property:"NOR3",unit:"1",days_vacant:62,market_rent:1050},
+  {property:"NOR3",unit:"3",days_vacant:31,market_rent:1000},
+  {property:"STA1-3",unit:"2A",days_vacant:85,market_rent:800},
+  {property:"STA1-3",unit:"3B",days_vacant:39,market_rent:825},
+  {property:"HUN30",unit:"1",days_vacant:47,market_rent:1150},
+  {property:"HUN30",unit:"4",days_vacant:11,market_rent:1100},
+  {property:"CAR411",unit:"2",days_vacant:72,market_rent:950},
+  {property:"CAR411",unit:"5",days_vacant:28,market_rent:975},
+  {property:"TER56",unit:"1",days_vacant:58,market_rent:1025},
+  {property:"TER56",unit:"3",days_vacant:15,market_rent:1050},
+  {property:"WAI52",unit:"B",days_vacant:36,market_rent:1175},
+  {property:"OZ",unit:"2",days_vacant:44,market_rent:1300},
+  {property:"HAM291",unit:"1A",days_vacant:33,market_rent:1400},
+  {property:"HAM291",unit:"3C",days_vacant:8,market_rent:1350},
+  {property:"FRO133",unit:"2",days_vacant:51,market_rent:1100},
+  {property:"FRO133",unit:"4",days_vacant:19,market_rent:1075},
+  {property:"MBL37",unit:"1",days_vacant:41,market_rent:950},
+  {property:"MBL37",unit:"3",days_vacant:7,market_rent:975},
+  {property:"WIN42",unit:"A",days_vacant:63,market_rent:850},
+  {property:"WIN42",unit:"C",days_vacant:25,market_rent:875},
+  {property:"COM99",unit:"2",days_vacant:38,market_rent:1225},
+  {property:"COM99",unit:"5",days_vacant:12,market_rent:1200},
+  {property:"ELM21-25",unit:"21B",days_vacant:74,market_rent:925},
+  {property:"ELM21-25",unit:"23A",days_vacant:29,market_rent:950},
+  {property:"FLO116",unit:"3",days_vacant:46,market_rent:1075},
+  {property:"FLO116",unit:"1",days_vacant:16,market_rent:1100},
+  {property:"SHE73",unit:"2",days_vacant:57,market_rent:1000},
+  {property:"CRE21",unit:"1",days_vacant:21,market_rent:1150},
+  {property:"OAK279",unit:"A",days_vacant:69,market_rent:1025},
+  {property:"OAK279",unit:"C",days_vacant:33,market_rent:1000},
+  {property:"STJ81",unit:"2",days_vacant:43,market_rent:1175},
+  {property:"FEN3",unit:"1",days_vacant:14,market_rent:1300},
+  {property:"AVD65",unit:"B",days_vacant:52,market_rent:1050},
+  {property:"JAB12",unit:"1",days_vacant:26,market_rent:1125},
+  {property:"CL ",unit:"1",days_vacant:81,market_rent:800},
+  {property:"CL ",unit:"2",days_vacant:37,market_rent:825},
+  {property:"BTN37",unit:"3",days_vacant:48,market_rent:975},
+  {property:"ECR-NEW",unit:"A",days_vacant:9,market_rent:1400},
+  {property:"PAR42",unit:"2",days_vacant:35,market_rent:1050},
+  {property:"STA13",unit:"1",days_vacant:20,market_rent:925},
+  {property:"ROC85",unit:"3",days_vacant:59,market_rent:1075},
+  {property:"ROC85",unit:"1A",days_vacant:13,market_rent:1100},
+  {property:"15W",unit:"2",days_vacant:40,market_rent:1200},
+  {property:"FRE5",unit:"1",days_vacant:6,market_rent:1150},
+  {property:"MRN180",unit:"B",days_vacant:31,market_rent:950},
+  {property:"THI64",unit:"2",days_vacant:17,market_rent:1025}
+];
+const VACANT_AS_OF = "Apr 3, 2026";
 
 
 // ── Formatters ────────────────────────────────────────────────────────────────
@@ -431,6 +512,26 @@ makeGauge('gaugeColl', 'gCollVal', 'gCollSub',
   OP_KPIS.collection_rate, 'Collection', `$${fmt(OP_KPIS.total_collected)} / $$${fmt(OP_KPIS.total_billed)}`, 0.95);
 makeGauge('gaugeDel',  'gDelVal',  'gDelSub',
   OP_KPIS.delinquency_rate, 'Delinquency', `$${fmt(OP_KPIS.outstanding_balance)} outstanding`, 0.05, true);
+
+// ── Vacant Units Table ──────────────────────────────────────────────────────
+(function renderVacantUnits() {
+  if (typeof VACANT_UNITS === 'undefined') return;
+  const sorted = [...VACANT_UNITS].sort((a,b) => b.days_vacant - a.days_vacant);
+  document.getElementById('vacantAsOf').textContent = VACANT_AS_OF;
+  document.getElementById('vacantCount').textContent = sorted.length + ' units';
+  const tbody = document.getElementById('vacantBody');
+  let totalRent = 0;
+  sorted.forEach(v => {
+    totalRent += v.market_rent;
+    const cls = v.days_vacant > 30 ? 'vac-red' : v.days_vacant >= 14 ? 'vac-orange' : 'vac-green';
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>'+v.property+'</td><td>'+v.unit+'</td><td class="'+cls+'">'+v.days_vacant+' days</td><td>$'+v.market_rent.toLocaleString()+'</td>';
+    tbody.appendChild(tr);
+  });
+  const longest = sorted[0];
+  document.getElementById('vacantSummary').innerHTML = '<strong>Total potential monthly rent at risk:</strong> $'+totalRent.toLocaleString()+' &nbsp;|&nbsp; <strong>Longest vacancy:</strong> '+longest.property+' Unit '+longest.unit+' ('+longest.days_vacant+' days)';
+})();
+
 
 // ── Tables ────────────────────────────────────────────────────────────────────
 
