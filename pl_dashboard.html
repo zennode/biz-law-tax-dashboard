@@ -252,6 +252,7 @@
     <div class="tab active" onclick="switchTab('top')">Top Performers</div>
     <div class="tab" onclick="switchTab('bot')">Bottom Performers</div>
     <div class="tab" onclick="switchTab('all')">All Properties</div>
+    <div class="tab" onclick="switchTab('company')">Company Numbers</div>
   </div>
   <div class="chart-card">
     <div id="pane-top" class="tab-pane active">
@@ -262,6 +263,9 @@
     </div>
     <div id="pane-all" class="tab-pane">
       <div class="scroll-table"><table id="tblAll"></table></div>
+    </div>
+    <div id="pane-company" class="tab-pane">
+      <div class="table-wrap"><table id="tblCompany"></table></div>
     </div>
   </div>
 
@@ -521,6 +525,24 @@ function buildTable(rows, tblId) {
 buildTable(TOP10, 'tblTop');
 buildTable(BOT10, 'tblBot');
 buildTable(ALL_PROPS, 'tblAll');
+function buildCompanyTable() {
+  var tbl = document.getElementById('tblCompany');
+  if (!tbl) return;
+  var D = function(n) { return n < 0 ? '($' + fmt(-n) + ')' : '$' + fmt(n); };
+  var cols = ['Entity','Props','LY Income','LY Expenses','LY NOI','PY NOI','YoY Change'];
+  var html = '<thead><tr>' + cols.map(function(c){return '<th>'+c+'</th>';}).join('') + '</tr></thead><tbody>';
+  ENTITY_CHART.labels.forEach(function(lbl, i) {
+    var inc = ENTITY_CHART.income[i];
+    var exp = ENTITY_CHART.expenses[i];
+    var noi = ENTITY_CHART.noi[i];
+    var pynoi = ENTITY_CHART.py_noi[i];
+    var yoy = noi - pynoi;
+    html += '<tr><td>' + lbl + '</td><td style="text-align:center">' + ENTITY_CHART.counts[i] + '</td><td>' + D(inc) + '</td><td>' + D(exp) + '</td><td' + (noi<0?' class="neg"':'') + '>' + D(noi) + '</td><td' + (pynoi<0?' class="neg"':'') + '>' + D(pynoi) + '</td><td' + (yoy<0?' class="neg"':'') + '>' + (yoy>=0?'+':'') + D(yoy) + '</td></tr>';
+  });
+  html += '</tbody>';
+  tbl.innerHTML = html;
+}
+buildCompanyTable();
 
 // ── Tabs ──────────────────────────────────────────────────────────────────────
 function switchTab(name) {
