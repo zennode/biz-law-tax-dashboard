@@ -327,7 +327,7 @@ kpis.forEach(k => {
   div.className = 'kpi-card ' + k.cls;
   let val_str = k.isPct ? fmtPct(k.val) : ('$' + fmt(k.val));
   let delta_html = '';
-  if(k.pyval !== null) {
+  if(k.pyval != null) {
     const delta = k.val - k.pyval;
     const pct   = k.pyval !== 0 ? delta/Math.abs(k.pyval)*100 : 0;
     const up    = delta >= 0;
