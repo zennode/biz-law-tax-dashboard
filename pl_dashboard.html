@@ -473,23 +473,22 @@ makeGauge('gaugeDel',  'gDelVal',  'gDelSub',
   OP_KPIS.delinquency_rate, 'Delinquency', 'of rent past due', 0.05, true);
 
 // ── Vacant Units Table ──────────────────────────────────────────────────────
-(function dvac(u){return Math.floor((new Date()-new Date(u.vacant_since))/86400000);}
-  function renderVacantUnits() {
+(function renderVacantUnits() {
   if (typeof VACANT_UNITS === 'undefined') return;
-  const sorted = [...VACANT_UNITS].sort((a,b) => dvac(b) - dvac(a));
+  const sorted = [...VACANT_UNITS].sort((a,b) => Math.floor((new Date()-new Date(b.vacant_since))/86400000) - Math.floor((new Date()-new Date(a.vacant_since))/86400000));
   document.getElementById('vacantAsOf').textContent = VACANT_AS_OF;
   document.getElementById('vacantCount').textContent = sorted.length + ' units';
   const tbody = document.getElementById('vacantBody');
   let totalRent = 0;
   sorted.forEach(v => {
     totalRent += v.market_rent;
-    const cls = dvac(v) > 30 ? 'vac-red' : dvac(v) >= 14 ? 'vac-orange' : 'vac-green';
+    const cls = Math.floor((new Date()-new Date(v.vacant_since))/86400000) > 30 ? 'vac-red' : Math.floor((new Date()-new Date(v.vacant_since))/86400000) >= 14 ? 'vac-orange' : 'vac-green';
     const tr = document.createElement('tr');
-    tr.innerHTML = '<td>'+v.property+'</td><td>'+v.unit+'</td><td class="'+cls+'">'+dvac(v)+' days</td><td>$'+v.market_rent.toLocaleString()+'</td>';
+    tr.innerHTML = '<td>'+v.property+'</td><td>'+v.unit+'</td><td class="'+cls+'">'+Math.floor((new Date()-new Date(v.vacant_since))/86400000)+' days</td><td>$'+v.market_rent.toLocaleString()+'</td>';
     tbody.appendChild(tr);
   });
   const longest = sorted[0];
-  document.getElementById('vacantSummary').innerHTML = '<strong>Total potential monthly rent at risk:</strong> $'+totalRent.toLocaleString()+' &nbsp;|&nbsp; <strong>Longest vacancy:</strong> '+longest.property+' Unit '+longest.unit+' ('+dvac(longest)+' days)';
+  document.getElementById('vacantSummary').innerHTML = '<strong>Total potential monthly rent at risk:</strong> $'+totalRent.toLocaleString()+' &nbsp;|&nbsp; <strong>Longest vacancy:</strong> '+longest.property+' Unit '+longest.unit+' ('+Math.floor((new Date()-new Date(longest.vacant_since))/86400000)+' days)';
 })();
 
 
