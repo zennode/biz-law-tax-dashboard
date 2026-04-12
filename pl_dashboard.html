@@ -324,6 +324,27 @@ const VACANT_UNITS = [
 ];
 
 
+
+// ── Formatters ────────────────────────────────────────────────────────────────
+function fmt(v, dec=0) {
+  if(v===null||v===undefined) return '—';
+  const abs = Math.abs(v);
+  const str = abs.toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+  return (v<0?'('+str+')':str);
+}
+function fmtK(v) {
+  if(Math.abs(v)>=1000000) return (v/1000000).toFixed(1)+'M';
+  if(Math.abs(v)>=1000) return (v/1000).toFixed(0)+'K';
+  return v.toFixed(0);
+}
+function fmtPct(v) { return (v*100).toFixed(1)+'%'; }
+function pct_class(v) { return v>=0?'pos':'neg'; }
+
+// ── Header badges ──────────────────────────────────────────────────────────────
+document.getElementById('hb-props').textContent  = TOTALS.n_props + ' Active Properties';
+document.getElementById('hb-noi').textContent    = 'LY NOI: $' + fmtK(TOTALS.ly_noi);
+document.getElementById('hb-cfads').textContent  = 'Cash Flow After DS: $' + fmtK(TOTALS.ly_cfads);
+
 // ── KPI Grid ──────────────────────────────────────────────────────────────────
 const kpis = [
   { label:'Total Income',    val:TOTALS.ly_income,   pyval:TOTALS.py_income,   cls:'',      icon:'💰' },
