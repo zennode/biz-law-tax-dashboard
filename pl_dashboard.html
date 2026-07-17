@@ -631,13 +631,13 @@ makeGauge('gaugeDel',  'gDelVal',  'gDelSub',
   const tbody = document.getElementById('vacantBody');
   let totalRent = 0;
   sorted.forEach(v => {
-    totalRent += v.market_rent;
+    totalRent += (v.market_rent || 0);
     const cls = Math.floor((new Date()-new Date(v.vacant_since))/86400000) > 30 ? 'vac-red' : Math.floor((new Date()-new Date(v.vacant_since))/86400000) >= 14 ? 'vac-orange' : 'vac-green';
     const tr = document.createElement('tr');
-    tr.innerHTML = '<td>'+(PROPERTY_ADDR[v.property]||v.property)+'</td><td>'+v.unit+'</td><td class="'+cls+'">'+Math.floor((new Date()-new Date(v.vacant_since))/86400000)+' days</td><td>$'+v.market_rent.toLocaleString()+'</td><td>'+(v.type||'Res')+'</td>';
+    tr.innerHTML = '<td>'+(PROPERTY_ADDR[v.property]||v.property)+'</td><td>'+v.unit+'</td><td class="'+cls+'">'+(v.vacant_since ? Math.floor((new Date()-new Date(v.vacant_since))/86400000)+' days' : '—')+'</td><td>'+(v.market_rent != null ? '$'+v.market_rent.toLocaleString() : '—')+'</td><td>'+(v.type||'Res')+'</td>';
     tbody.appendChild(tr);
   });
-  const longest = sorted[0];
+  const longest = sorted.find(v=>v.vacant_since) || sorted[0];
   document.getElementById('vacantSummary').innerHTML = '<strong>Total potential monthly rent at risk:</strong> $'+totalRent.toLocaleString()+' &nbsp;|&nbsp; <strong>Longest vacancy:</strong> '+(PROPERTY_ADDR[longest.property]||longest.property)+' Unit '+longest.unit+' ('+Math.floor((new Date()-new Date(longest.vacant_since))/86400000)+' days)';
 })();
 
