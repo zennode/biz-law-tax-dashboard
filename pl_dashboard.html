@@ -171,7 +171,7 @@
 <div class="main">
 
   <!-- ── Portfolio KPIs ── -->
-  <div class="section-title">Calendar YTD — Jan–Mar 2026</div>
+  <div class="section-title">Calendar YTD — Jan–Jun 2026</div>
   <div class="kpi-grid" id="ytd-kpi-grid"></div>
 
   <div class="section-title">Portfolio Overview — Last Year (Apr 2025–Mar 2026)</div>
@@ -472,7 +472,7 @@ const kpis = [
   { label:'NOI After CapEx', val:TOTALS.ly_noi,      pyval:TOTALS.py_noi,      cls:'green', icon:'📊' },
   { label:'Mortgage Principal',val:TOTALS.ly_principal,pyval:null,             cls:'gold',  icon:'🏦' },
   { label:'Cash Flow After DS',val:TOTALS.ly_cfads,  pyval:null,               cls:'green', icon:'💵' },
-  { label:'Expense Ratio',   val:TOTALS.ly_exp_ratio,pyval:TOTALS.py_exp_ratio,cls:'',      icon:'⚖️', isPct:true },
+  { label:'Expense Ratio',   val:TOTALS.ly_exp_ratio/100,pyval:TOTALS.py_exp_ratio/100,cls:'',      icon:'⚖️', isPct:true },
 ];
 
 const kg = document.getElementById('kpi-grid');
@@ -503,12 +503,12 @@ kpis.forEach(k => {
 
 // ── YTD KPI Cards ─────────────────────────────────────────────────────────────
 const ytdKpis = [
-  { label:'YTD Income',    val:YTD_TOTALS.ytd_income,   lyval:TOTALS.ly_income/4,   cls:'',       icon:'📅' },
-  { label:'YTD Expenses',  val:YTD_TOTALS.ytd_expenses, lyval:TOTALS.ly_expenses/4, cls:'red',    icon:'📋' },
-  { label:'YTD NOI',       val:YTD_TOTALS.ytd_noi,      lyval:TOTALS.ly_noi/4,      cls:'green',  icon:'📈' },
-  { label:'YTD CapEx',       val:YTD_TOTALS.ytd_capex,    lyval:TOTALS.ly_capex/4,    cls:'red',    icon:'🔧' },
-  { label:'YTD Mortgage Paid',      val:YTD_TOTALS.ytd_principal, lyval:TOTALS.ly_principal/4, cls:'red',   icon:'🏦' },
-  { label:'YTD Cash Flow After DS', val:YTD_TOTALS.ytd_cfads,     lyval:TOTALS.ly_cfads/4,     cls:'',      icon:'💵' },
+  { label:'YTD Income',    val:YTD_TOTALS.ytd_income,   lyval:TOTALS.ly_income/2,   cls:'',       icon:'📅' },
+  { label:'YTD Expenses',  val:YTD_TOTALS.ytd_expenses, lyval:TOTALS.ly_expenses/2, cls:'red',    icon:'📋' },
+  { label:'YTD NOI',       val:YTD_TOTALS.ytd_noi,      lyval:TOTALS.ly_noi/2,      cls:'green',  icon:'📈' },
+  { label:'YTD CapEx',       val:YTD_TOTALS.ytd_capex,    lyval:TOTALS.ly_capex/2,    cls:'red',    icon:'🔧' },
+  { label:'YTD Mortgage Paid',      val:YTD_TOTALS.ytd_principal, lyval:TOTALS.ly_principal/2, cls:'red',   icon:'🏦' },
+  { label:'YTD Cash Flow After DS', val:YTD_TOTALS.ytd_cfads,     lyval:TOTALS.ly_cfads/2,     cls:'',      icon:'💵' },
 ];
 const ytdSection = document.getElementById('ytd-kpi-grid');
 if (ytdSection) {
@@ -525,8 +525,8 @@ if (ytdSection) {
     div.innerHTML = `
       <div class="kpi-label">${k.icon} ${k.label}</div>
       <div class="kpi-value">$${fmt(k.val)}</div>
-      <div class="kpi-sub">Jan – Mar 2026</div>
-      <div class="kpi-delta ${dCls}">${dSign}$${fmtK(delta)} (${dSign}${pct.toFixed(1)}%) vs LY Q1 pace</div>
+      <div class="kpi-sub">Jan – Jun 2026</div>
+      <div class="kpi-delta ${dCls}">${dSign}$${fmtK(delta)} (${dSign}${pct.toFixed(1)}%) vs LY H1 pace</div>
     `;
     ytdSection.appendChild(div);
   });
