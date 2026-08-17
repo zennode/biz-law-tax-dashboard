@@ -171,7 +171,7 @@
 <div class="main">
 
   <!-- ── Portfolio KPIs ── -->
-  <div class="section-title">Calendar YTD — Jan–Jun 2026</div>
+  <div class="section-title">Calendar YTD — Jan–Jul 2026</div>
   <div class="kpi-grid" id="ytd-kpi-grid"></div>
 
   <div class="section-title">Portfolio Overview — Last Year (Apr 2025–Mar 2026)</div>
@@ -388,7 +388,7 @@ if (ytdSection) {
     div.innerHTML = `
       <div class="kpi-label">${k.icon} ${k.label}</div>
       <div class="kpi-value">$${fmt(k.val)}</div>
-      <div class="kpi-sub">Jan – Jun 2026</div>
+      <div class="kpi-sub">Jan – Jul 2026</div>
       <div class="kpi-delta ${dCls}">${dSign}$${fmtK(delta)} (${dSign}${pct.toFixed(1)}%) vs LY H1 pace</div>
     `;
     ytdSection.appendChild(div);
