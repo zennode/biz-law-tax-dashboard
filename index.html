@@ -21,7 +21,7 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
-
+  
   /* Header */
   .header { background:linear-gradient(135deg, #1e2235 0%, #151827 100%); border-bottom:1px solid var(--border); padding:28px 40px; }
   .header-top { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
@@ -29,1269 +29,171 @@
   .header h1 span { color:var(--accent-blue); }
   .header-meta { color:var(--text-muted); font-size:0.85rem; }
   .last-updated { background:var(--tag-bg); color:var(--accent-blue); padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600; }
-
-  /* Navigation Tabs */
-  .tabs { display:flex; gap:4px; padding:12px 40px 0; background:var(--card); border-bottom:1px solid var(--border); overflow-x:auto; }
-  .tab { padding:10px 20px; cursor:pointer; color:var(--text-muted); font-size:0.9rem; font-weight:500; border-bottom:2px solid transparent; transition:all 0.2s; white-space:nowrap; }
-  .tab:hover { color:var(--text); }
-  .tab.active { color:var(--accent-blue); border-bottom-color:var(--accent-blue); }
-
-  /* Main Layout */
-  .main { padding:24px 40px 60px; max-width:1440px; margin:0 auto; }
-
-  /* Section hidden by default */
-  .section { display:none; }
-  .section.active { display:block; }
-
-  /* KPI Row */
-  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:28px; }
-  .kpi { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; }
-  .kpi-label { font-size:0.78rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
-  .kpi-value { font-size:1.6rem; font-weight:700; }
-  .kpi-sub { font-size:0.8rem; color:var(--text-muted); margin-top:4px; }
-  .kpi-value.green { color:var(--accent-green); }
-  .kpi-value.orange { color:var(--accent-orange); }
-  .kpi-value.red { color:var(--accent-red); }
-  .kpi-value.blue { color:var(--accent-blue); }
-  .kpi-value.purple { color:var(--accent-purple); }
-
+  
   /* Cards */
-  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:20px; transition:background 0.2s; }
-  .card:hover { background:var(--card-hover); }
-  .card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; gap:12px; flex-wrap:wrap; }
-  .card-title { font-size:1.1rem; font-weight:600; }
-  .card-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(380px, 1fr)); gap:20px; }
-
-  /* Tags */
-  .tag { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; }
-  .tag-opportunity { background:rgba(52,211,153,0.15); color:var(--accent-green); }
-  .tag-risk { background:rgba(239,68,68,0.15); color:var(--accent-red); }
-  .tag-info { background:rgba(78,140,255,0.15); color:var(--accent-blue); }
-  .tag-action { background:rgba(245,158,11,0.15); color:var(--accent-orange); }
-  .tag-new { background:rgba(167,139,250,0.15); color:var(--accent-purple); }
-
-  /* Impact meter */
-  .impact { display:flex; align-items:center; gap:6px; margin-top:8px; }
-  .impact-label { font-size:0.75rem; color:var(--text-muted); }
-  .impact-bar { height:6px; border-radius:3px; background:var(--border); flex:1; max-width:120px; overflow:hidden; }
-  .impact-fill { height:100%; border-radius:3px; }
-  .impact-fill.high { background:var(--accent-red); width:90%; }
-  .impact-fill.medium { background:var(--accent-orange); width:60%; }
-  .impact-fill.low { background:var(--accent-green); width:30%; }
-
-  /* Detail lists */
-  .detail-list { list-style:none; }
-  .detail-list li { padding:10px 0; border-bottom:1px solid var(--border); font-size:0.9rem; }
-  .detail-list li:last-child { border-bottom:none; }
-  .detail-list li strong { color:var(--accent-blue); }
-
-  /* Action items */
-  .action-item { display:flex; gap:12px; padding:12px 16px; border-radius:8px; background:rgba(78,140,255,0.05); border-left:3px solid var(--accent-blue); margin-bottom:10px; }
-  .action-item.green { border-left-color:var(--accent-green); background:rgba(52,211,153,0.05); }
-  .action-item.orange { border-left-color:var(--accent-orange); background:rgba(245,158,11,0.05); }
-  .action-number { font-weight:700; color:var(--accent-blue); min-width:24px; }
-  .action-item.green .action-number { color:var(--accent-green); }
-  .action-item.orange .action-number { color:var(--accent-orange); }
-  .action-text { font-size:0.88rem; }
-  .action-text strong { color:var(--text); }
-
-  /* Collapsible */
-  .collapsible-header { cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
-  .collapsible-header::after { content:'▸'; transition:transform 0.2s; font-size:0.9rem; color:var(--text-muted); }
-  .collapsible-header.open::after { transform:rotate(90deg); }
-  .collapsible-body { max-height:0; overflow:hidden; transition:max-height 0.3s ease; }
-  .collapsible-body.open { max-height:3000px; }
-
-  /* Table */
-  table { width:100%; border-collapse:collapse; font-size:0.88rem; }
-  th { text-align:left; padding:10px 14px; background:rgba(78,140,255,0.08); color:var(--accent-blue); font-weight:600; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.3px; }
-  td { padding:10px 14px; border-bottom:1px solid var(--border); }
-  tr:hover td { background:rgba(255,255,255,0.02); }
-
-  /* Responsive */
-  @media (max-width:768px) {
-    .header, .main { padding-left:16px; padding-right:16px; }
-    .tabs { padding-left:16px; }
-    .card-grid { grid-template-columns:1fr; }
-    .kpi-row { grid-template-columns:repeat(2,1fr); }
-  }
-
-  /* Print */
-  @media print {
-    body { background:#fff; color:#111; }
-    .card { border:1px solid #ddd; break-inside:avoid; }
-    .tabs { display:none; }
-    .section { display:block !important; page-break-before:always; }
-  }
-
-  /* Source link */
-  .source-link { color:var(--accent-blue); text-decoration:none; font-size:0.78rem; }
-  .source-link:hover { text-decoration:underline; }
-  .sources-section { margin-top:16px; padding-top:12px; border-top:1px solid var(--border); }
-  .sources-section h4 { font-size:0.78rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px; }
-  .sources-section a { display:block; color:var(--accent-blue); text-decoration:none; font-size:0.82rem; margin-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:20px; margin-bottom:16px; }
+  .card-title { font-size:1.1rem; font-weight:600; margin-bottom:12px; }
+  .card-subtitle { font-size:0.9rem; color:var(--text-muted); margin-bottom:8px; }
+  
+  /* Tables */
+  table { width:100%; border-collapse:collapse; margin:12px 0; }
+  th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); }
+  th { background:rgba(78,140,255,0.1); font-weight:600; color:var(--accent-blue); }
+  tr:hover { background:var(--card-hover); }
+  
+  /* Tags and badges */
+  .tag { display:inline-block; background:var(--tag-bg); color:var(--accent-blue); padding:4px 10px; border-radius:4px; font-size:0.75rem; font-weight:600; margin:2px 4px 2px 0; }
+  .badge-high { color:var(--accent-red); }
+  .badge-medium { color:var(--accent-orange); }
+  .badge-low { color:var(--accent-green); }
+  
+  /* Main */
+  .main { padding:24px 40px 60px; max-width:1440px; margin:0 auto; }
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-top">
-    <div>
-      <h1>Law & Tax <span>Intelligence Dashboard</span></h1>
-      <div class="header-meta">Matt's Portfolio — Real Estate · Carwash · Hard Money Lending · Massachusetts · Connecticut</div>
-    </div>
-    <span class="last-updated" id="updatedDate">Updated: August 30, 2026</span>
+    <h1>Business Law <span>&</span> Tax Dashboard</h1>
+    <span class="last-updated">Updated 2026-09-18</span>
   </div>
-</div>
-
-<div class="tabs" id="tabs">
-  <div class="tab active" data-tab="overview">Overview</div>
-  <div class="tab" data-tab="realestate">Real Estate</div>
-  <div class="tab" data-tab="carwash">Carwash</div>
-  <div class="tab" data-tab="lending">Hard Money Lending</div>
-  <div class="tab" data-tab="employer">Employer Laws</div>
-  <div class="tab" data-tab="actions">Action Plan</div>
-  <div class="tab" data-tab="sources">Sources</div>
+  <div class="header-meta">Real Estate • Carwash • Hard Money Lending | Massachusetts & Federal</div>
 </div>
 
 <div class="main">
 
-<!-- ============ OVERVIEW ============ -->
-<div class="section active" id="overview">
+<section class="card">
+  <div class="card-title">📊 Weekly Summary</div>
+  <table>
+    <tr>
+      <th>Metric</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td>New Changes This Week</td>
+      <td><strong>7 Significant Updates</strong></td>
+    </tr>
+    <tr>
+      <td>High-Impact Items</td>
+      <td>4 (OBBBA, MA Decoupling, Money Transmitter Law, State/Federal Mismatch)</td>
+    </tr>
+    <tr>
+      <td>Focus Areas</td>
+      <td>Real Estate Depreciation, Hard Money Compliance, Tax Thresholds</td>
+    </tr>
+  </table>
+</section>
 
-  <div style="margin:0 0 18px;padding:14px 16px;border:1px solid var(--border);border-left:4px solid var(--accent-blue);border-radius:8px;background:rgba(56,139,253,0.07);">
-    <div style="font-size:0.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Weekly Scan — Week of August 30, 2026</div>
-    <div style="font-size:0.9rem;line-height:1.5;">
-      Three new items this week. The headline for real estate: Massachusetts finalized major zoning reform in the FY2027 budget — <strong>the 40-year-old variance standard (G.L. c.40A §10) has been replaced</strong>. Boards can now grant a variance for "practical difficulty" instead of the old "substantial hardship" test tied to a lot's unique soil, shape, or topography, and financial hardship is now an explicit factor. This is a real opening for fix-and-flip or conversion projects that couldn't clear the old bar — worth revisiting anything previously denied. Second, for the lending business: the <strong>CFPB's rewrite of Regulation B took effect July 21</strong>, eliminating disparate-impact liability under ECOA nationally — but Massachusetts (with CA and NJ) keeps independent state-level disparate-impact authority, so this doesn't meaningfully change your MA compliance posture; your business-purpose exemption remains the real shield. Third, on the <strong>MA Legislature's July 31 "deadline"</strong>: it turns out not to be a hard stop — the ~$120M PFAS remediation bond bill (Mass Ready Act) and the PFAS consumer-product ban bills are in conference committee, and as long as conferees are named today, talks can continue informally into the fall/winter. Don't expect quick resolution on either. No other material carwash-specific items this week.
-    </div>
+<section class="card">
+  <div class="card-title">🔴 HIGH IMPACT — Must Act</div>
+  
+  <div style="border-left:4px solid #ef4444; padding:12px; margin:12px 0; background:rgba(239,68,68,0.1); border-radius:4px;">
+    <div class="card-subtitle" style="color:var(--accent-red);">Massachusetts Money Transmitter License — COMPLIANCE DEADLINE PASSED</div>
+    <p><strong>What:</strong> M.G.L. c. 169B (Money Transmission Law) effective Jan 1, 2026. Hard money lenders must obtain money transmitter licenses.</p>
+    <p><strong>Impact:</strong> Deadline was July 1, 2026. Any lender who did not comply by that date must immediately stop lending in MA until licensed.</p>
+    <p><strong>Action:</strong> If hard money lending in MA: (1) Verify license status immediately; (2) If not licensed, do not originate new loans in MA; (3) Contact MA Division of Banks to obtain/maintain license; (4) Document compliance.</p>
+    <div style="margin-top:8px;"><span class="badge-high tag">HIGH</span> <span class="tag">Hard Money</span> <span class="tag">Compliance</span></div>
   </div>
 
-
-  <div class="kpi-row">
-    <div class="kpi">
-      <div class="kpi-label">MA Income Surtax</div>
-      <div class="kpi-value orange">+4%</div>
-      <div class="kpi-sub">On income above $1,107,750 (2026)</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Bonus Depreciation</div>
-      <div class="kpi-value green">100%</div>
-      <div class="kpi-sub">Restored permanently (OBBBA)</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">SALT Cap</div>
-      <div class="kpi-value green">$40,400</div>
-      <div class="kpi-sub">Raised from $10K (2026 TY)</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">QBI Deduction</div>
-      <div class="kpi-value green">20%</div>
-      <div class="kpi-sub">Made permanent (was expiring)</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Section 179 Limit</div>
-      <div class="kpi-value blue">$2.56M</div>
-      <div class="kpi-sub">2026 inflation-adjusted</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Estate Exemption</div>
-      <div class="kpi-value blue">$15M</div>
-      <div class="kpi-sub">$30M joint — made permanent</div>
-    </div>
+  <div style="border-left:4px solid #ef4444; padding:12px; margin:12px 0; background:rgba(239,68,68,0.1); border-radius:4px;">
+    <div class="card-subtitle" style="color:var(--accent-red);">OBBBA: 100% Bonus Depreciation Now Permanent (IRS Notice 2026-11/16)</div>
+    <p><strong>What:</strong> The One Big Beautiful Bill Act (signed July 4, 2025) made 100% bonus depreciation permanent for qualified property acquired after Jan 19, 2025. IRS issued Notice 2026-11 (general guidance) and Notice 2026-16 (special depreciation rules).</p>
+    <p><strong>Impact:</strong> Massive boost to real estate depreciation deductions. Cost segregation studies now extremely valuable—100% first-year deductions on 5/7/15-year assets.</p>
+    <p><strong>Action:</strong> For all 2025+ acquisitions: (1) Consider cost seg studies (especially for commercial/multifamily); (2) Plan for large depreciation deductions; (3) Update tax projections; (4) Consult on bonus depreciation elections.</p>
+    <div style="margin-top:8px;"><span class="badge-high tag">HIGH</span> <span class="tag">Real Estate</span> <span class="tag">Federal Tax</span></div>
   </div>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">Key Legislative Changes Affecting Your Businesses</div>
-      <span class="tag tag-new">2025–2026</span>
-    </div>
-    <table>
-      <thead>
-        <tr><th>Change</th><th>Level</th><th>Businesses Affected</th><th>Impact</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>MA Commercial Conversion Tax Credit — Healey administration awards $15.3M to convert commercial buildings into 856 new homes (EOHLC)</td><td>State</td><td>Real Estate</td><td><span class="tag tag-opportunity">Opportunity</span> Confirms the CCTCI pipeline is funding real conversions. The 2026 NOFA round closed Apr 2, 2026; watch for the next cycle before committing 159 Main St (Cooper's Commons) or 939 East Columbus Ave to a conversion plan.</td></tr>
-        <tr><td>MA deeds excise on transfers of controlling interests — proposed extension to entity-level transfers, with a $1M cap on the assumed-mortgage deduction</td><td>State</td><td>Real Estate · Lending</td><td><span class="tag tag-risk">Watch</span> Would tax transfers of LLC/TIC interests that hold MA real property, not just recorded deeds. Directly relevant to the Flying Monkey TIC (1361 Memorial Dr) and the 59 King Spring TIC structure. Still a proposal, not law.</td></tr>
-        <tr><td>One Big Beautiful Bill Act (signed July 4, 2025)</td><td>Federal</td><td>All three</td><td><span class="tag tag-opportunity">Major Opportunity</span></td></tr>
-        <tr><td>MA 4% Surtax — threshold now $1,107,750 (2026)</td><td>State</td><td>All three</td><td><span class="tag tag-risk">Tax Increase Risk</span></td></tr>
-        <tr><td>MA $1M+ Real Estate Transfer Withholding (Nov 2025)</td><td>State</td><td>Real Estate / Lending</td><td><span class="tag tag-risk">Compliance Required</span></td></tr>
-        <tr><td>100% Bonus Depreciation restored permanently</td><td>Federal</td><td>Real Estate / Carwash</td><td><span class="tag tag-opportunity">Major Opportunity</span></td></tr>
-        <tr><td>SALT Deduction raised to $40,400 (phase-out at $505K+ AGI)</td><td>Federal</td><td>All three</td><td><span class="tag tag-opportunity">Tax Savings</span></td></tr>
-        <tr><td>QBI 20% Deduction made permanent</td><td>Federal</td><td>All three</td><td><span class="tag tag-opportunity">Tax Savings</span></td></tr>
-        <tr><td>Qualified Opportunity Zones made permanent</td><td>Federal</td><td>Real Estate / Lending</td><td><span class="tag tag-opportunity">Growth Opportunity</span></td></tr>
-        <tr><td>MA Mortgage Licensing Amendments (Oct 2025)</td><td>State</td><td>Hard Money Lending</td><td><span class="tag tag-info">Compliance Update</span></td></tr>
-        <tr><td>MA Housing & Commercial-to-Residential Credits</td><td>State</td><td>Real Estate</td><td><span class="tag tag-opportunity">New Credit</span></td></tr>
-        <tr><td>Section 179 increased to $2.5M/$2.56M</td><td>Federal</td><td>Carwash / Real Estate</td><td><span class="tag tag-opportunity">Tax Savings</span></td></tr>
-        <tr><td>MA Hazardous Waste Program RCRA Authorization (Nov 2025)</td><td>State</td><td>Carwash</td><td><span class="tag tag-info">Compliance Update</span></td></tr>
-        <tr><td>Business Interest Deduction expanded (Sec 163j)</td><td>Federal</td><td>All three</td><td><span class="tag tag-opportunity">Tax Savings</span></td></tr>
-        <tr><td>IRS Notice 2026-11 — Interim guidance on permanent 100% bonus depreciation (Jan 2026)</td><td>Federal</td><td>Real Estate / Carwash</td><td><span class="tag tag-new">New Guidance</span></td></tr>
-        <tr><td>MA DOR penalty abatement rule for financial hardship (830 CMR 62C.16B.1, Feb 2026)</td><td>State</td><td>All three</td><td><span class="tag tag-info">Compliance Update</span></td></tr>
-        <tr><td>MA Div. of Banks enforcement — Homespire Mortgage consent order ($10K penalty)</td><td>State</td><td>Hard Money Lending</td><td><span class="tag tag-risk">Enforcement Signal</span></td></tr>
-        <tr><td>QOZ new zone nominations — Treasury window opened July 1, 2026; state nominations due Sept 28, 2026</td><td>Federal</td><td>Real Estate / Lending</td><td><span class="tag tag-action">Window Open</span></td></tr>
-        <tr><td>MA Climate Readiness & Disclosure Act — flood risk disclosure (pending spring 2026)</td><td>State</td><td>Real Estate / Lending</td><td><span class="tag tag-info">Watch List</span></td></tr>
-        <tr><td>MA surtax threshold adjusted to $1,107,750 for TY 2026</td><td>State</td><td>All three</td><td><span class="tag tag-info">Annual Adjustment</span></td></tr>
-        <tr><td>IRS Notice 2026-16 — 100% depreciation for Qualified Production Property (Feb 20, 2026; comments closed Apr 20)</td><td>Federal</td><td>Carwash / Real Estate</td><td><span class="tag tag-new">New Guidance</span></td></tr>
-        <tr><td>Treasury/IRS QOZ guidance — state nomination procedures for new census tracts (Apr 2026)</td><td>Federal</td><td>Real Estate / Lending</td><td><span class="tag tag-action">Due Sep 28</span></td></tr>
-        <tr><td>OBBBA Overtime Pay Deduction — up to $12,500/$25,000 for qualified overtime (2025–2028)</td><td>Federal</td><td>Carwash (employer)</td><td><span class="tag tag-opportunity">Employee Benefit</span></td></tr>
-        <tr><td>Employer Childcare Credit increased to $500K/$600K (OBBBA)</td><td>Federal</td><td>Carwash (employer)</td><td><span class="tag tag-opportunity">Tax Credit</span></td></tr>
-        <tr><td>MA Rent Stabilization Bill — advancing to Joint Committee, possible mid-2026 vote</td><td>State</td><td>Real Estate</td><td><span class="tag tag-risk">Watch List</span></td></tr>
-        <tr><td>MA Rent Control Ballot Initiative — 124K+ signatures collected; legislature's May 5 deadline passed without action. Petitioners now need 12,429 more signatures to place on November 2026 ballot. Would cap rent increases at inflation (max 5%)</td><td>State</td><td>Real Estate</td><td><span class="tag tag-risk">High Risk — Urgent</span></td></tr>
-        <tr><td>MA Senate Property Tax Relief Package — 5 bills (S.2899–S.2902, S.1948) passed Senate, heading to House. Includes senior tax deferral expansion, municipal rebates, veteran relief</td><td>State</td><td>Real Estate</td><td><span class="tag tag-info">Legislative Update</span></td></tr>
-        <tr><td>MA Deed Excise Tax Increase Proposals — would raise from $4.56 to ~$6.84 per $1,000; Healey's proposal failed to advance in housing bond bill — stalled for now</td><td>State</td><td>Real Estate / Lending</td><td><span class="tag tag-info">Stalled</span></td></tr>
-        <tr><td>IRS releases 2026 inflation adjustments with OBBBA amendments — standard deduction $32,200 (MFJ), estate exclusion $15M, SALT cap $40,400, Section 179 $2.56M confirmed</td><td>Federal</td><td>All three</td><td><span class="tag tag-info">Confirmed for 2026</span></td></tr>
-        <tr><td>MA Rent Control Ballot — signature collection ongoing; petitioners need ~12,429 more certified signatures by late June to qualify for November 2026 ballot</td><td>State</td><td>Real Estate</td><td><span class="tag tag-risk">Deadline Approaching</span></td></tr>
-        <tr><td>MA FY2026 property tax assessments — median 6% increase across 340 communities; Boston facing commercial value declines shifting burden to residential</td><td>State</td><td>Real Estate</td><td><span class="tag tag-info">Assessment Update</span></td></tr>
-        <tr><td>MA SJC strikes rent control question from November 2026 ballot (June 23, 2026) — petition's religious exemption ruled unconstitutional; 88,132 signatures certified but measure disqualified; supporters plan to refile</td><td>State</td><td>Real Estate</td><td><span class="tag tag-opportunity">Major Risk Removed</span></td></tr>
-        <tr><td>OBBBA W-2 reporting requirement — employers must separately report qualified tips and overtime compensation on 2026 W-2s (penalty relief ended)</td><td>Federal</td><td>Carwash (employer)</td><td><span class="tag tag-action">Compliance Required</span></td></tr>
-        <tr><td>Section 179D energy-efficient building deduction sunsets June 30, 2026 — construction must BEGIN before this date to qualify for up to $5.81/sq ft deduction</td><td>Federal</td><td>Real Estate / Carwash</td><td><span class="tag tag-risk">Deadline Jun 30</span></td></tr>
-        <tr><td>IRS Conservation Easement Settlement (IR-2026-65, May 2026) — 90-day settlement window for 1,100+ disputed cases; 10% penalty rate, no upfront payment for ~450 cases</td><td>Federal</td><td>Real Estate</td><td><span class="tag tag-new">New — May 2026</span></td></tr>
-        <tr><td>FinCEN residential real estate reporting rule (all-cash entity purchases) — took effect March 1, vacated nationwide by federal court March 19, 2026. Currently NOT in effect; appeal possible</td><td>Federal</td><td>Real Estate / Lending</td><td><span class="tag tag-info">Vacated — Watch</span></td></tr>
-        <tr><td>MA "Fair Share" 4% surtax revenue reaches ~$3.1B for FY2026 (reported late May 2026) — far above the $2B projection; surtax now a core, durable budget item (repeal odds fall)</td><td>State</td><td>All three</td><td><span class="tag tag-new">New — Jun 2026</span></td></tr>
-        <tr><td>Q2 estimated tax payments due June 15, 2026 — federal (IRS) and MA (MassTaxConnect); MA surtax must be included in estimates if income will exceed $1,107,750</td><td>Federal / State</td><td>All three</td><td><span class="tag tag-action">Deadline Jun 15</span></td></tr>
-        <tr><td>MA broker-fee ban enforcement ramping up — AG's office has received 12+ complaints against landlords/agents; landlords who engage the broker must pay the fee (law effective Aug 1, 2025)</td><td>State</td><td>Real Estate</td><td><span class="tag tag-risk">Enforcement Signal</span></td></tr>
-        <tr><td>QOZ deferred-gain recognition date Dec 31, 2026 — all pre-2027 gains deferred into Qualified Opportunity Funds become taxable on 2026 returns; plan liquidity now (held 5+ yrs = 10% exclusion, 7+ yrs = 15%)</td><td>Federal</td><td>Real Estate / Lending</td><td><span class="tag tag-action">Year-End Planning</span></td></tr>
-        <tr><td>IRS Notice 2026-40 — post-OBBBA QOZ transitional guidance (Jun 18, 2026): confirms Dec 31, 2026 deemed gain inclusion, preserves 10-yr FMV step-up on exit, adds working-capital &amp; ordinary-course-replacement safe harbors, and a compliance bridge through Dec 31, 2047</td><td>Federal</td><td>Real Estate / Lending</td><td><span class="tag tag-new">New — Jun 2026</span></td></tr>
-        <tr><td>MA DOR withholding regulation amendments (830 CMR 62B; effective Jun 5, 2026) — incorporate 4% surtax withholding for performers, film production companies &amp; loan-out entities (narrow scope; minimal direct impact)</td><td>State</td><td>All three</td><td><span class="tag tag-info">Compliance Update</span></td></tr>
-        <tr><td>MA MRVP/AHVP voucher rules — effective July 1, 2026, rent increases for voucher tenants only at lease renewal, must be requested ≥90 days prior; requests &lt;60 days out deferred to following year</td><td>State</td><td>Real Estate</td><td><span class="tag tag-new">New — Jul 2026</span></td></tr>
-        <tr><td>EPA draft guidance on PFOA/PFOS in biosolids (Federal Register, early July 2026) — walks back prior risk assessment as overstated; opens 60-day comment period; signals lighter-touch federal PFAS posture</td><td>Federal</td><td>Carwash</td><td><span class="tag tag-new">New — Jul 2026</span></td></tr>
-        <tr><td>OZ 2.0 nomination window open — MA to designate 103 zones from 410 eligible tracts; Healey admin targeting early-September submission; eligible-tract map &amp; feedback form published; designations effective Jan 1, 2027</td><td>State / Federal</td><td>Real Estate / Lending</td><td><span class="tag tag-new">New — Jul 2026</span></td></tr>
-        <tr><td>MA FY2027 budget signed July 9, 2026 ($63.4B, no vetoes) — no new taxes or fees; $2.7B Fair Share surtax revenue allocated 64% education / 36% transportation</td><td>State</td><td>All three</td><td><span class="tag tag-info">No Tax Changes</span></td></tr>
-        <tr><td>MA PFAS bills (S.1504 / H.2197) before Ways &amp; Means — would ban PFAS in consumer products &amp; food packaging; biosolids land-application ban proposed (S.2802); formal session ends July 31</td><td>State</td><td>Carwash</td><td><span class="tag tag-info">Watch List</span></td></tr>
-        <tr><td>MA H.5470 (FY26 supplemental, enacted Jun 12, 2026) — elective PTET expanded to cover the 4% surtax starting TY2026; MA conformity to OBBBA §179 / R&amp;D / §163(j) provisions delayed behind revenue triggers</td><td>State</td><td>All three</td><td><span class="tag tag-opportunity">Major Opportunity</span></td></tr>
-        <tr><td>IRS mid-year mileage rate increase (IRB 2026-29, Jul 13, 2026) — business rate 72.5¢ → 76¢/mile effective Jul 1, 2026; first mid-year adjustment since 2022</td><td>Federal</td><td>All three</td><td><span class="tag tag-new">New — Jul 2026</span></td></tr>
-        <tr><td>21st Century ROAD to Housing Act (H.R. 6644, law Jul 11, 2026) — first major federal housing package since the 1990s; moratorium on large institutional investors buying single-family homes; supply-side reforms; BTR carve-out</td><td>Federal</td><td>Real Estate / Lending</td><td><span class="tag tag-new">New — Jul 2026</span></td></tr>
-        <tr><td>IRS "Automatic Exemption from Penalty" (AEP) replaces First Time Abate — automatic suppression of failure-to-file/pay/deposit penalties for clean 3-yr compliance history; phase-in summer 2026, full effect for returns due on/after Jan 1, 2027</td><td>Federal</td><td>All three</td><td><span class="tag tag-new">New — Jul 2026</span></td></tr>
-        <tr><td>CFPB RFI on TRID rule, TILA right of rescission &amp; reverse mortgages (comments due Aug 10, 2026) — deregulatory review of mortgage disclosure rules; business-purpose loans remain exempt</td><td>Federal</td><td>Hard Money Lending</td><td><span class="tag tag-info">Watch List</span></td></tr>
-        <tr><td>MA Zoning Act Amendments (G.L. c.40A §10) — FY2027 budget replaces the "substantial hardship" variance standard with "practical difficulty," adds financial hardship &amp; housing benefit as explicit factors (signed Jul 9, 2026, effective immediately)</td><td>State</td><td>Real Estate</td><td><span class="tag tag-opportunity">Major Opportunity</span></td></tr>
-        <tr><td>CFPB final rule eliminates ECOA disparate-impact liability (Regulation B amendments), effective Jul 21, 2026 — MA, CA &amp; NJ retain independent state-level disparate-impact authority</td><td>Federal</td><td>Hard Money Lending</td><td><span class="tag tag-new">New — Jul 2026</span></td></tr>
-        <tr><td>MA formal session "deadline" (Jul 31) not a hard stop — Mass Ready Act ($120M PFAS bond bill) &amp; PFAS ban bills (S.1504/H.2197, S.2802) remain in conference; talks can continue informally once conferees are named</td><td>State</td><td>Carwash / Real Estate</td><td><span class="tag tag-info">Watch List</span></td></tr>
-      </tbody>
-    </table>
+  <div style="border-left:4px solid #f59e0b; padding:12px; margin:12px 0; background:rgba(245,158,11,0.1); border-radius:4px;">
+    <div class="card-subtitle" style="color:var(--accent-orange);">Massachusetts Decouples from Federal Bonus Depreciation (2025-2026)</div>
+    <p><strong>What:</strong> Massachusetts temporarily decouples from federal special depreciation allowance (IRC §168(n)) for qualified production property (QPP) placed in service in 2025 and 2026 tax years.</p>
+    <p><strong>Impact:</strong> <strong>STATE-FEDERAL MISMATCH:</strong> Federal return claims 100% bonus depreciation, but MA return requires normal MACRS depreciation. Creates a permanent state add-back.</p>
+    <p><strong>Action:</strong> For MA residents: (1) Track federal vs. state depreciation schedules separately; (2) Plan for permanent state add-backs on QPP; (3) Consult on alternative minimum tax (AMT) exposure; (4) Consider amended returns if already filed 2025 with federal bonus dep.</p>
+    <div style="margin-top:8px;"><span class="badge-high tag">MEDIUM</span> <span class="tag">Real Estate</span> <span class="tag">MA Tax</span></div>
   </div>
-</div>
+</section>
 
-<!-- ============ REAL ESTATE ============ -->
-<div class="section" id="realestate">
+<section class="card">
+  <div class="card-title">🟡 MEDIUM IMPACT — Plan Ahead</div>
 
-  <div class="kpi-row">
-    <div class="kpi">
-      <div class="kpi-label">MA Long-Term Cap Gains (Top)</div>
-      <div class="kpi-value red">9%</div>
-      <div class="kpi-sub">5% base + 4% surtax over $1.11M</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">MA Short-Term Cap Gains (Top)</div>
-      <div class="kpi-value red">12.5%</div>
-      <div class="kpi-sub">8.5% base + 4% surtax</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Transfer Withholding Threshold</div>
-      <div class="kpi-value orange">$1M+</div>
-      <div class="kpi-sub">Effective Nov 1, 2025</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">1031 Exchange</div>
-      <div class="kpi-value green">Active</div>
-      <div class="kpi-sub">Defers both federal & MA taxes</div>
-    </div>
+  <div style="border-left:4px solid #f59e0b; padding:12px; margin:12px 0; background:rgba(245,158,11,0.1); border-radius:4px;">
+    <div class="card-subtitle" style="color:var(--accent-orange);">Massachusetts Surtax Threshold Increased to $1,107,750</div>
+    <p><strong>What:</strong> The 4% surtax threshold (MA "millionaire tax") increased from $1,083,150 to $1,107,750 for all filing statuses, effective Jan 1, 2026. Indexed annually for inflation.</p>
+    <p><strong>Impact:</strong> Income above $1,107,750 = 9% state tax instead of 5%. Affects W-2 wages, business income, and capital gains.</p>
+    <p><strong>Action:</strong> For high-income business owners: (1) Review 2026 projected income; (2) Consider 1040 withholding adjustments if threshold will be crossed; (3) Plan timing of large real estate sales or loan payoffs; (4) Evaluate QBI deduction impact.</p>
+    <div style="margin-top:8px;"><span class="badge-high tag">MEDIUM</span> <span class="tag">MA Tax</span> <span class="tag">Tax Planning</span></div>
   </div>
 
-  <div class="card-grid">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">New: ROAD to Housing Act — Institutional Investor Moratorium</div>
-        <span class="tag tag-new">New — Jul 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> The 21st Century ROAD to Housing Act (H.R. 6644) became law July 11, 2026 — the first major bipartisan federal housing package since the 1990s (Senate 85–5, House 358–32). It imposes the first broad federal moratorium on large institutional investors purchasing single-family homes, alongside dozens of supply-side reforms (zoning incentives, permitting, manufactured housing). The final text softened the build-to-rent provisions: the 7-year forced-disposal requirement and renter right-of-first-refusal were dropped.</li>
-        <li><strong>Impact on you:</strong> You are not the target — the moratorium aims at large Wall Street-scale buyers, not local investors. Net effect is likely favorable: your best-capitalized competition for single-family acquisitions is restricted, which could modestly ease bidding pressure on flip and rental purchases in your MA/CT markets. Your hard money borrowers (local flippers) benefit the same way.</li>
-        <li><strong>Strategy:</strong> Watch for implementing regulations defining "large institutional investor" thresholds to confirm your entities fall well outside the definition (they should). If institutional demand pulls back in any of your submarkets, be ready to acquire — less competition at the margin can mean better entry prices. No compliance action expected for your scale.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">New: MRVP/AHVP Voucher Rent-Increase Rules</div>
-        <span class="tag tag-new">New — Jul 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Effective July 1, 2026, updated rules for the Massachusetts Rental Voucher Program (MRVP) and Alternative Housing Voucher Program (AHVP). Contract rents may only be increased at the lease-renewal date, increases must be requested at least 90 days before renewal, and any request made fewer than 60 days out will not be processed until the following year.</li>
-        <li><strong>Impact on you:</strong> Applies to any residential unit rented to a voucher-holding tenant. Missing the 90-day window means a full year with no rent increase on that unit.</li>
-        <li><strong>Strategy:</strong> Add a 90-days-before-renewal reminder for every voucher tenancy. Submit increase requests early and confirm receipt with the administering agency. No effect on market-rate (non-voucher) units.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">New: MA Zoning Variance Standard Eased — G.L. c.40A §10</div>
-        <span class="tag tag-new">New — Jul 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> As part of the FY2027 budget (signed July 9, 2026), the Legislature completely replaced the variance standard under M.G.L. c.40A, §10. The old standard required "substantial hardship" tied to conditions unique to the specific lot (soil, shape, topography) — notoriously hard to meet and a frequent basis for denial. The new standard asks only whether "strict enforcement of the ordinance or by-law would result in practical difficulty," and requires the board to weigh benefits to the applicant and the public (explicitly including housing production) against detriments to neighborhood health, safety, and welfare. The amendment also allows boards to consider financial hardship, whether the relief sought could be achieved some other way, and whether the difficulty was self-created.</li>
-        <li><strong>Impact on you:</strong> Every ZBA variance you've pursued or considered for a fix-and-flip or conversion — setback relief, parking reduction, use variances, lot coverage — just got meaningfully easier to win, especially on older or oddly-shaped MA parcels that couldn't clear the old "unique to this lot" bar. Projects shelved after a prior denial may be worth a second look.</li>
-        <li><strong>Strategy:</strong> Revisit any variance-dependent project that was previously denied or judged unlikely to succeed. For commercial-to-residential conversions, pair a new variance application with the MA Commercial Conversion Tax Credit for a stronger overall case. Courts haven't yet defined how broadly "practical difficulty" will be read, so consult land-use counsel on how your target municipalities' ZBAs are applying the new standard before committing significant capital.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">MA 4% Surtax on High Income</div>
-        <span class="tag tag-risk">Risk</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Additional 4% tax on all taxable income (including capital gains) above $1,107,750 for 2026 (indexed for inflation annually; was $1,083,150 for 2025).</li>
-        <li><strong>Impact on you:</strong> Profitable flip sales or property dispositions that push your income above the threshold trigger 9% effective state capital gains rate (up from 5%).</li>
-        <li><strong>Strategy:</strong> Time property sales across tax years to stay under the threshold. Use 1031 exchanges to defer gains. Consider installment sales to spread recognition over multiple years.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">New: PTET Election Now Covers the 4% Surtax</div>
-        <span class="tag tag-opportunity">New — Jul 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Massachusetts' FY2026 supplemental budget (H.5470, enacted June 12, 2026) expands the elective pass-through entity excise (PTET) to include income subject to the 4% surtax, effective for tax years beginning in 2026. Previously the PTET workaround covered only the base 5% income tax. The same law delays MA conformity to certain OBBBA business provisions (§179 expensing, R&amp;D/§174A, business-interest §163(j)) until state revenue triggers are met.</li>
-        <li><strong>Impact on you:</strong> In years when flip gains, rental income, or lending profits push your taxable income above $1,107,750, an electing S-corp or partnership can now pay the surtax portion at the entity level — making it federally deductible without regard to the SALT cap (members claim the 90% MA credit as usual). Separately, MA may not follow federal treatment of §179 and business-interest deductions on your state return — federal/state books can diverge.</li>
-        <li><strong>Strategy:</strong> Have your CPA model a 2026 PTET election that includes the surtax before Q3 estimated payments (due Sept 15). Confirm which entities benefit most — the election is made per-entity annually. Flag the OBBBA conformity delay so MA depreciation/interest add-backs don't surprise you at filing time.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">100% Bonus Depreciation — Permanent</div>
-        <span class="tag tag-opportunity">Opportunity</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> The One Big Beautiful Bill Act (OBBBA) permanently restored 100% first-year bonus depreciation for qualified property acquired after Jan 19, 2025. IRS Notice 2026-11 (issued Jan 14, 2026) provides interim guidance confirming the existing TCJA framework applies with updated dates; component elections can maximize eligibility on larger projects.</li>
-        <li><strong>Impact on you:</strong> All personal property in rental units (appliances, HVAC, flooring) and qualified improvement property (interior renovations to commercial spaces) can be fully expensed in year one.</li>
-        <li><strong>Strategy:</strong> Perform cost segregation studies on every property to reclassify building components (e.g., lighting, landscaping, parking lots) from 39-year to 5/7/15-year life, then apply 100% bonus depreciation. This can generate massive paper losses to offset rental income and flip gains.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">QOZ Transitional Guidance — IRS Notice 2026-40</div>
-        <span class="tag tag-new">New — Jun 18, 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> The IRS issued the first transitional guidance reconciling the old TCJA Opportunity Zone rules with the OBBBA rewrite (ahead of proposed regulations). It addresses how investments in <em>previously designated</em> zones are treated as the original zone designations wind down (expiring Dec 31, 2028 for most zones; Dec 31, 2027 for Puerto Rico).</li>
-        <li><strong>Key points:</strong> (1) Pre-2027 deferred gains in a QOF are <strong>recognized on Dec 31, 2026</strong> and cannot be re-deferred — but the investment stays eligible for the <strong>10-year FMV basis step-up</strong> on later sale. (2) Two safe harbors let you keep buying property in older zones after 2026: a <strong>working-capital plan</strong> exception (plan adopted by Dec 31, 2026, with 10% funded / 5% spent) and an <strong>ordinary-course replacement</strong> exception (modernization/replacement of existing assets — <em>not</em> expansion). (3) A compliance bridge keeps expired zones treated as QOZs through <strong>Dec 31, 2047</strong> for the substantial-use and 50% gross-income tests.</li>
-        <li><strong>Strategy:</strong> If you hold any QOF interests, model the Dec 31, 2026 income inclusion into year-end liquidity now. If you're developing in an existing zone, get a written working-capital plan adopted and partially funded <strong>before year-end 2026</strong> to preserve QOZBP status on post-2026 purchases. For new gains, weigh deferring the investment to on/after Jan 1, 2027 to access the OBBBA 5-year inclusion deferral and 10% (30% rural) basis step-up. New 2027-cycle zone designations are due from states by <strong>July 1, 2026</strong>.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">MA $1M+ Transfer Withholding</div>
-        <span class="tag tag-action">Action Required</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> As of Nov 1, 2025, all real estate transfers with gross sales price ≥ $1M require 4% withholding at closing (non-residents). Full-year MA residents are exempt.</li>
-        <li><strong>Impact on you:</strong> As a MA resident you're exempt from withholding, but your hard money lending borrowers who are non-residents will be affected. Flip buyers from out of state will have reduced proceeds at closing.</li>
-        <li><strong>Strategy:</strong> Ensure your borrowers (hard money clients) are aware of this rule. For your own sales, confirm residency documentation is on file. For fix-and-flip deals, factor the withholding impact into deal analysis for non-resident partners.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">QBI Deduction — Now Permanent</div>
-        <span class="tag tag-opportunity">Opportunity</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> The 20% Section 199A qualified business income deduction has been made permanent by OBBBA. Was set to expire end of 2025.</li>
-        <li><strong>Impact on you:</strong> Rental income, carwash income, and lending income all potentially qualify for a 20% deduction on pass-through income, reducing your effective federal rate.</li>
-        <li><strong>Strategy:</strong> Ensure each business entity is structured to maximize QBI. If any business is a specified service trade or business (SSTB), income limits apply — consider restructuring. Your rental activities should qualify under the safe harbor (250+ hours) or real estate professional status.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">Qualified Opportunity Zones — Permanent</div>
-        <span class="tag tag-opportunity">Opportunity</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> OBBBA made QOZ provisions permanent and requires new zone designations by July 1, 2026, effective Jan 1, 2027. New QOZ investments after Dec 31, 2026 get a five-year deferral and 10% basis step-up. States must submit new zones by July 1, 2026 — deadline approaching.</li>
-        <li><strong>Impact on you:</strong> Capital gains from property sales or other investments can be deferred by reinvesting in QOZ funds. New zones will open up fresh investment territory in Massachusetts.</li>
-        <li><strong>Strategy:</strong> Identify current and upcoming MA Opportunity Zones. When selling flip properties, roll gains into QOZ real estate investments. This can pair with your hard money lending — fund projects in opportunity zones for additional tax benefits.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">MA Housing & Conversion Tax Credits</div>
-        <span class="tag tag-new">New for 2025</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Two new nonrefundable credits: (1) for developers building new housing units (amount set by MA Housing Finance Agency), and (2) for converting commercial property to residential/mixed-use (up to 10% of conversion costs, set by EOHLC).</li>
-        <li><strong>Impact on you:</strong> If you convert any commercial holdings to residential or develop new units, you may qualify for meaningful state tax credits.</li>
-        <li><strong>Strategy:</strong> Evaluate underperforming commercial properties for residential conversion potential. The 10% credit on conversion costs plus federal bonus depreciation on improvements creates a powerful tax incentive stack.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">1031 Exchange — Still Your Best Friend</div>
-        <span class="tag tag-info">Ongoing</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> 1031 like-kind exchanges continue to defer both federal and Massachusetts capital gains taxes. No changes to the program under OBBBA.</li>
-        <li><strong>Impact on you:</strong> When selling rental properties, you can defer the full federal + MA tax burden (up to 9% state + 20% federal + 3.8% NIIT).</li>
-        <li><strong>Strategy:</strong> For rentals you're ready to exit, use 1031 exchanges to trade into higher-quality or Opportunity Zone properties. Combine with cost segregation on the replacement property to generate immediate depreciation deductions.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">Estate Tax Exemption — $15M Permanent</div>
-        <span class="tag tag-opportunity">Opportunity</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> OBBBA made the doubled federal estate/gift exemption permanent at $15M per person ($30M joint) for 2026, indexed for inflation. Note: MA estate tax exemption remains at $2M (much lower).</li>
-        <li><strong>Impact on you:</strong> Federal estate planning pressure eased, but Massachusetts still taxes estates above $2M — this is a significant gap for real estate portfolios.</li>
-        <li><strong>Strategy:</strong> Use irrevocable trusts, family LLCs, and valuation discounts to keep your MA taxable estate under $2M. Gift properties or LLC interests during your lifetime to reduce estate value. The $15M federal exemption gives ample room for gifting strategies.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">OZ 2.0 — MA Nomination Window Now Open</div>
-        <span class="tag tag-new">Updated — Jul 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Treasury opened the new Opportunity Zone designation cycle on July 1, 2026. Governors have a 90-day window — nominations are due September 28, 2026, with designations effective Jan 1, 2027 for 10 years. Massachusetts can designate 103 zones from a pool of 410 eligible tracts (down from 138 in 2018, under tightened income criteria; contiguous-tract designations no longer allowed). The Healey administration is targeting an early-September submission and has published an eligible-tract map and a public Community Feedback Form.</li>
-        <li><strong>Impact:</strong> New MA Opportunity Zones will create fresh investment targets. Properties in newly designated zones will qualify for capital gains deferral and basis step-up benefits (10% after 5 years; 30% for rural tracts, which also get a reduced 50% substantial-improvement threshold).</li>
-        <li><strong>Strategy:</strong> Check the state's eligible-tract map against your holdings and lending footprint now. If a tract you own or lend in is eligible, engage municipal leadership and submit input via the state feedback form before the early-September nomination. Position early to acquire properties in likely new zones before designation drives prices up.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">MA Rent Control Ballot Initiative — Struck From Ballot</div>
-        <span class="tag tag-opportunity">Risk Removed — Jun 23</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> On June 23, 2026 the Massachusetts Supreme Judicial Court ruled the rent-control question cannot appear on the November 2026 ballot. Although the Elections Division had certified 88,132 valid signatures (well above the ~74,574 required), the Court found the petition unconstitutional because it carved out an exemption for units "operated solely for … religious … purposes" — and the MA Constitution bars initiative petitions "relating to religion, religious practices, or religious institutions." The measure would have capped annual rent increases at inflation (max 5%), exempting new construction (10 years) and owner-occupied buildings of 4 or fewer units.</li>
-        <li><strong>Impact:</strong> The single biggest near-term risk to your residential rental portfolio is off the table for 2026 — no statewide rent cap will go before voters this November. However, supporters (Homes for All Massachusetts) called the religious-exemption flaw "easily fixable" and intend to redraft and refile, so a similar measure could return via a future ballot cycle or the legislature.</li>
-        <li><strong>Strategy:</strong> Risk is deferred, not eliminated. You can stand down any defensive rent resets that were driven purely by ballot-timing urgency, but keep rents at market and document increases. Continue monitoring Homes for All and the legislature's rent-stabilization bills (still in Joint Committee). Maintain MassLandlords membership for early warning on any refiled initiative.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">MA Senate Property Tax Relief Package</div>
-        <span class="tag tag-new">New — Jan 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Five bills passed the MA Senate in January 2026 and are heading to the House: S.2899 (shields taxpayers from 10%+ levy spikes), S.2900 (allows municipal tax rebates for lower/middle-income owners), S.2901 (expands senior tax deferral eligibility from 10 to 7 years residency), S.2902 (means-tested senior exemption), and S.1948 (veteran property tax work-off).</li>
-        <li><strong>Impact:</strong> If signed into law, these could reduce property tax burdens on certain tenants and owner-occupants in your rental markets, indirectly affecting housing demand and affordability dynamics. The senior deferral and exemption bills could also benefit you personally as part of long-term estate planning.</li>
-        <li><strong>Strategy:</strong> Monitor House action on these bills. The municipal rebate provision (S.2900) could make certain communities more attractive for renters, supporting demand for your rental properties in those areas.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill low"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">MA Deed Excise Tax Increase Proposals</div>
-        <span class="tag tag-info">Stalled</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Multiple proposals would raise the MA deed excise tax from the current $4.56 per $1,000 to approximately $6.84 per $1,000 — a roughly 50% increase. Revenue would fund the Affordable Housing Trust Fund, Housing Preservation and Stabilization Fund, and the Global Warming Solutions Trust Fund. However, Governor Healey's broader proposal failed to advance in the most recent housing bond bill — the increase is effectively stalled for now.</li>
-        <li><strong>Impact:</strong> Reduced urgency. The proposal remains alive but is not moving through the legislature. Transaction costs remain at current levels for the foreseeable future.</li>
-        <li><strong>Strategy:</strong> Continue monitoring, but no immediate action needed. The proposal could resurface in a future legislative session. Current deal analysis can use the existing $4.56 per $1,000 rate.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">Section 179D Energy-Efficient Building Deduction — Sunsetting June 30</div>
-        <span class="tag tag-risk">Deadline Jun 30, 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> The OBBBA added a termination provision for the Section 179D energy-efficient commercial building deduction: it will not apply to property whose construction begins after June 30, 2026. Projects can be placed in service after that date — it's the construction start date that controls eligibility.</li>
-        <li><strong>Impact:</strong> If you're planning any energy-efficient upgrades to your commercial rental properties or carwash building (HVAC, lighting, building envelope improvements), you must begin construction before June 30 to claim up to $5.81 per square foot in deductions. A minimum of 5% of total project cost must be spent or significant physical work begun before the deadline.</li>
-        <li><strong>Strategy:</strong> Evaluate any planned commercial property improvements for 179D eligibility immediately. Even starting demolition or ordering long-lead equipment before June 30 can establish the "beginning of construction" requirement. Combine with 100% bonus depreciation for maximum first-year write-off.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">FinCEN All-Cash Real Estate Reporting — Vacated</div>
-        <span class="tag tag-info">Vacated Mar 19, 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> FinCEN's new rule requiring beneficial ownership reporting on all-cash residential real estate purchases through entities/trusts took effect March 1, 2026, but was vacated nationwide by a federal district court on March 19, 2026. The court held FinCEN exceeded its authority under the Bank Secrecy Act. As of now, no federal beneficial ownership reporting requirement exists for residential real estate transactions.</li>
-        <li><strong>Impact:</strong> For now, your LLC-based property purchases and those of your hard money borrowers do not require FinCEN beneficial ownership disclosure on all-cash deals. However, the ruling may be appealed — this could be reinstated.</li>
-        <li><strong>Strategy:</strong> Continue monitoring for an appeal. Keep your entity documentation organized in case the rule is reinstated. This is a watch-list item — no compliance action needed currently, but be prepared to implement reporting quickly if the ruling is overturned.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill low"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">IRS Conservation Easement Settlement — May 2026</div>
-        <span class="tag tag-new">New — May 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> The IRS announced a time-limited settlement opportunity (IR-2026-65) for 1,100+ taxpayers involved in conservation easement disputes. Terms include no charitable deduction allowed, a 10% gross valuation misstatement penalty, and a 90-day response window. Nearly 450 cases won't require upfront payment.</li>
-        <li><strong>Impact:</strong> If you've participated in any syndicated conservation easement transactions, this settlement opportunity is time-limited. Even if you haven't, this signals continued IRS scrutiny of easement valuations — relevant if you're considering conservation easements as a tax strategy on any of your land holdings.</li>
-        <li><strong>Strategy:</strong> If you have any involvement in conservation easement transactions, consult your tax attorney about the settlement terms immediately. For future planning, be cautious with any conservation easement deductions — ensure appraisals are independently defensible and not part of syndicated arrangements.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill low"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">MA FY2026 Property Tax Assessments — Median 6% Increase</div>
-        <span class="tag tag-new">New — May 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> FY2026 assessed values increased in 340 of 351 MA communities, with a median increase of 6%. The largest increase was 29.7% (Alford). Boston is experiencing declining commercial property values, potentially shifting more of the tax burden to residential properties under Proposition 2½ constraints.</li>
-        <li><strong>Impact:</strong> Higher assessed values on your rental properties mean higher property tax bills, squeezing margins. Boston's commercial-to-residential tax shift could particularly affect residential rental landlords in the city. However, the higher SALT cap ($40,400) helps offset more of these costs on your federal return.</li>
-        <li><strong>Strategy:</strong> Review your property tax assessments across all holdings and appeal any that appear inflated relative to market conditions. Factor the 6% median increase into your rental rate analysis. Monitor Boston's tax classification vote for any residential surcharge shifts.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ============ CARWASH ============ -->
-<div class="section" id="carwash">
-
-  <div class="kpi-row">
-    <div class="kpi">
-      <div class="kpi-label">Section 179 Limit (2026)</div>
-      <div class="kpi-value green">$2.56M</div>
-      <div class="kpi-sub">Phase-out starts at $4.09M</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Bonus Depreciation</div>
-      <div class="kpi-value green">100%</div>
-      <div class="kpi-sub">All qualified equipment & improvements</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">QBI Deduction</div>
-      <div class="kpi-value green">20%</div>
-      <div class="kpi-sub">Permanent — pass-through income</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">RCRA Authorization</div>
-      <div class="kpi-value blue">Updated</div>
-      <div class="kpi-sub">MA hazardous waste rules — Nov 2025</div>
-    </div>
+  <div style="border-left:4px solid #f59e0b; padding:12px; margin:12px 0; background:rgba(245,158,11,0.1); border-radius:4px;">
+    <div class="card-subtitle" style="color:var(--accent-orange);">Opportunity Zones 2.0 Made Permanent (Effective Jan 1, 2027)</div>
+    <p><strong>What:</strong> The OBBBA made the Opportunity Zone program permanent and updated it to Opportunity Zones 2.0, effective Jan 1, 2027. SALT deduction cap increased to $40,000 (2025-2029).</p>
+    <p><strong>Impact:</strong> OZ investments now have permanent incentive; $40k SALT cap relief for real estate investors.</p>
+    <p><strong>Action:</strong> For eligible investments: (1) Evaluate OZ 2.0 benefits for 2026-year acquisitions (take effect 1/1/27); (2) Take advantage of $40k SALT cap through 2029.</p>
+    <div style="margin-top:8px;"><span class="badge-high tag">MEDIUM</span> <span class="tag">Real Estate</span> <span class="tag">QOZ</span></div>
   </div>
 
-  <div class="card-grid">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">100% Bonus Depreciation on Equipment</div>
-        <span class="tag tag-opportunity">Major Win</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> All carwash equipment purchased and placed in service after Jan 19, 2025 qualifies for 100% first-year expensing — tunnel systems, water reclamation, dryers, vacuums, POS systems, and more.</li>
-        <li><strong>Impact:</strong> Upgrading or expanding your carwash operation now carries an enormous tax advantage. Full cost written off in year one.</li>
-        <li><strong>Strategy:</strong> Accelerate any planned equipment upgrades or expansion to take full advantage. Purchase new tunnel equipment, water recycling systems, or automated payment kiosks — write off 100% immediately. Pair with Section 179 for any costs exceeding bonus depreciation eligibility.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">Section 179 Expensing — $2.56M for 2026</div>
-        <span class="tag tag-opportunity">Opportunity</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Section 179 now allows up to $2.56M in immediate deductions for 2026 (up from previous limits), with phase-out at $4.09M. Covers equipment, vehicles, and certain improvements.</li>
-        <li><strong>Impact:</strong> Your carwash vehicles (detail vans, supply trucks over 6,000 lbs GVWR) can qualify for accelerated deductions. Heavy vehicles over 14,000 lbs get full Section 179 without luxury caps.</li>
-        <li><strong>Strategy:</strong> Coordinate equipment and vehicle purchases across your businesses. Stack Section 179 first, then apply bonus depreciation on remaining basis. Document business use carefully (>50% required).</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">MA Hazardous Waste & Environmental Compliance</div>
-        <span class="tag tag-info">Compliance</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Massachusetts received final EPA authorization for updated RCRA hazardous waste program revisions (effective Nov 4, 2025). MassDEP continues to regulate wastewater discharge and chemical handling.</li>
-        <li><strong>Impact:</strong> Carwash operations must comply with updated wastewater discharge permits, chemical storage regulations, and waste disposal rules.</li>
-        <li><strong>Strategy:</strong> Audit your current wastewater treatment and chemical management systems. Invest in water reclamation (qualifies for bonus depreciation) to reduce discharge and lower compliance risk. Keep documentation current for MassDEP inspections.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">New: EPA Draft PFAS-in-Biosolids Guidance</div>
-        <span class="tag tag-new">New — Jul 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> In early July 2026 EPA published draft guidance (Federal Register) on reducing risk from PFOA/PFOS in biosolids, walking back the prior administration's risk assessment as relying on overstated, worst-case assumptions. A 60-day public comment period is open.</li>
-        <li><strong>Impact:</strong> Signals a lighter-touch federal PFAS posture that could ease future wastewater/sludge compliance costs. Note the offsetting trend: MassDEP is still adding PFAS testing requirements to NPDES and Surface Water Discharge permits as they come up for renewal.</li>
-        <li><strong>Strategy:</strong> No immediate action required — this is draft guidance, not a final rule. Watch for the final version and continue meeting existing MassDEP wastewater permit terms. Factor eased federal PFAS risk into any water-reclamation capital planning.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill low"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">New: MA PFAS Bills — Session-End Push</div>
-        <span class="tag tag-new">New — Jul 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> As EPA rolls back federal PFAS limits, MA lawmakers are pushing to pass PFAS legislation before the formal session ends July 31. S.1504 (Cyr) / H.2197 (Hogan) would ban PFAS in nine consumer-product categories and food packaging unless a waiver is obtained; a narrower bill (S.2802, Comerford) would ban land application of biosolids. Both House and Senate environmental bond bills include ~$120M for PFAS remediation, now in conference committee.</li>
-        <li><strong>Impact:</strong> None of these bills directly targets carwash chemicals, but the trend is clear: MA is moving toward stricter state-level PFAS regulation even as the federal government steps back. Cleaning-product and wastewater rules could tighten in future sessions, and MassDEP continues adding PFAS testing to NPDES/SWD permits at renewal.</li>
-        <li><strong>Strategy:</strong> Ask your chemical suppliers whether any detergents, waxes, or sealants used at the carwash contain intentionally added PFAS, and start identifying PFAS-free alternatives — getting ahead of a ban is cheaper than scrambling after one.</li>
-        <li><strong>Update (Jul 31):</strong> The Legislature's July 31 formal-session "deadline" is not a hard cutoff — as long as conferees are named for bills still in committee (both the Mass Ready Act bond bill and the PFAS ban bills qualify), negotiations can continue informally through the fall and winter, with pop-up sessions to approve a final deal. Don't expect quick resolution; keep this on the watch list rather than expecting action by a specific date.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill low"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">SALT Deduction Increase</div>
-        <span class="tag tag-opportunity">Tax Savings</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> SALT deduction cap raised from $10K to $40,400 for 2026 (with 1% annual increases through 2029). Note: phase-out begins at $505,000 modified AGI ($253,000 for MFS).</li>
-        <li><strong>Impact:</strong> Your Massachusetts property taxes and state income taxes on carwash profits are now more deductible on your federal return.</li>
-        <li><strong>Strategy:</strong> Re-evaluate whether itemizing now makes more sense. The $40K cap can offset significant MA state taxes, especially with the 4% surtax hitting higher earners. Work with your CPA to model the full benefit.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">Business Interest Deduction Expansion (Sec 163j)</div>
-        <span class="tag tag-opportunity">Opportunity</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> OBBBA now computes adjusted taxable income (ATI) without subtracting depreciation, amortization, and depletion — effectively increasing the amount of business interest you can deduct.</li>
-        <li><strong>Impact:</strong> If your carwash has equipment loans or an acquisition loan, more interest expense is now deductible.</li>
-        <li><strong>Strategy:</strong> Review financing on carwash equipment and real estate. The expanded interest deduction may make debt-financed expansion more tax-efficient. Consider whether refinancing at current terms makes sense given the expanded deductibility.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">IRS Notice 2026-16 — Qualified Production Property</div>
-        <span class="tag tag-new">New — Feb 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Notice 2026-16 provides interim guidance on the new 100% depreciation deduction for "qualified production property" placed in service after July 4, 2025 and before Jan 1, 2031. This applies to nonresidential real property used in production activities — potentially including carwash buildings/structures. Comment period closed Apr 20, 2026; proposed regulations expected.</li>
-        <li><strong>Impact:</strong> If carwash operations qualify as "production," the building itself (not just equipment) could be eligible for 100% first-year depreciation — a massive deduction opportunity.</li>
-        <li><strong>Strategy:</strong> Consult your tax advisor to determine whether your carwash building qualifies as "qualified production property." If it does, this could allow you to deduct the full cost of a new carwash building in year one. Monitor IRS proposed regulations for final definitions.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">OBBBA Overtime Pay Deduction — Employee Benefit</div>
-        <span class="tag tag-info">New — 2025–2028</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Under OBBBA, employees can deduct qualified overtime pay exceeding their regular rate, up to $12,500/year ($25,000 for joint filers), effective 2025–2028.</li>
-        <li><strong>Impact:</strong> This makes overtime shifts more attractive to your carwash employees, potentially easing staffing shortages. It's an employee-side deduction, not an employer cost — but it's a recruiting/retention tool.</li>
-        <li><strong>Strategy:</strong> Communicate this benefit to employees. Highlighting the tax advantage of overtime can help with staffing during peak seasons without increasing your per-hour labor costs.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill low"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">Section 179D — Carwash Building Energy Upgrades (Deadline Jun 30)</div>
-        <span class="tag tag-risk">Deadline Jun 30, 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> The Section 179D energy-efficient commercial building deduction sunsets for construction beginning after June 30, 2026. Carwash buildings qualify as nonresidential real property — HVAC upgrades, LED lighting, water heating, and building envelope improvements can earn up to $5.81 per square foot in deductions.</li>
-        <li><strong>Impact:</strong> If you're planning any energy-efficiency upgrades to your carwash facility, starting construction before June 30 preserves eligibility for this significant deduction. The 25% minimum energy savings threshold must be met to qualify.</li>
-        <li><strong>Strategy:</strong> Assess your carwash building for energy upgrade opportunities — LED lighting conversions, high-efficiency HVAC, and insulation improvements. Begin construction or spend 5% of project costs before June 30 to lock in eligibility. Stack with 100% bonus depreciation on qualified equipment for maximum first-year savings.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">OBBBA W-2 Reporting — Tips & Overtime (2026 TY)</div>
-        <span class="tag tag-action">Action Required</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Starting with tax year 2026, employers must separately report qualified tips and qualified overtime compensation on Form W-2. The IRS provided penalty relief for 2025, but that transition period has ended — 2026 W-2s must comply with the new reporting requirements.</li>
-        <li><strong>Impact:</strong> Your carwash business likely pays tips to some employees and overtime to hourly workers. Payroll systems must be updated to track and separately report these categories on W-2 forms.</li>
-        <li><strong>Strategy:</strong> Contact your payroll provider immediately to confirm their system supports the new W-2 reporting fields for qualified tips and overtime. Set up tracking categories now so year-end reporting is accurate. Failure to comply could result in IRS penalties.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
+  <div style="border-left:4px solid #34d399; padding:12px; margin:12px 0; background:rgba(52,211,153,0.1); border-radius:4px;">
+    <div class="card-subtitle" style="color:var(--accent-green);">2026 Section 179 Expensing Limits Confirmed</div>
+    <p><strong>What:</strong> Section 179 expensing limit is $2,560,000 for 2026; phase-out threshold is $4,090,000. No changes from 2025.</p>
+    <p><strong>Impact:</strong> Carwash equipment and hard money lending infrastructure can be expensed up to $2.56M in 2026.</p>
+    <p><strong>Action:</strong> For equipment purchases in 2026: (1) Plan Section 179 elections in tandem with 100% bonus depreciation; (2) Track total QIP placed in service.</p>
+    <div style="margin-top:8px;"><span class="badge-high tag">MEDIUM</span> <span class="tag">Tax Planning</span></div>
   </div>
-</div>
+</section>
 
-<!-- ============ HARD MONEY LENDING ============ -->
-<div class="section" id="lending">
+<section class="card">
+  <div class="card-title">🟢 LOW IMPACT — FYI</div>
 
-  <div class="kpi-row">
-    <div class="kpi">
-      <div class="kpi-label">MA Usury Limit</div>
-      <div class="kpi-value red">20% max</div>
-      <div class="kpi-sub">Criminal penalty above this rate</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">MA Avg Hard Money Rate</div>
-      <div class="kpi-value blue">11.39%</div>
-      <div class="kpi-sub">Q3 2025 data</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">License Exemption</div>
-      <div class="kpi-value orange">&lt;5 loans/yr</div>
-      <div class="kpi-sub">Under 5 residential in 12 months</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">QBI Deduction</div>
-      <div class="kpi-value green">20%</div>
-      <div class="kpi-sub">Lending income may qualify</div>
-    </div>
+  <div style="border-left:4px solid #34d399; padding:12px; margin:12px 0; background:rgba(52,211,153,0.1); border-radius:4px;">
+    <div class="card-subtitle" style="color:var(--accent-green);">Private Mortgage Insurance (PMI) Now Deductible</div>
+    <p><strong>What:</strong> Beginning in 2026, PMI premiums are treated as deductible mortgage interest (up to $750k loan cap).</p>
+    <p><strong>Impact:</strong> Marginal benefit for financed real estate (fix-and-flips with high LTV loans).</p>
+    <div style="margin-top:8px;"><span class="tag">Real Estate</span></div>
   </div>
 
-  <div class="card-grid">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">MA Division of Banks — Licensing Amendments</div>
-        <span class="tag tag-action">Action Required</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> On Sept 23, 2025, the MA Division of Banks finalized amendments to the Mortgage Lender and Broker Licensing Law, Small Loans Law, and Truth in Lending Act. Changes update licensing procedures, disclosure rules, and financial-responsibility standards.</li>
-        <li><strong>Impact:</strong> If you make 5+ residential mortgage loans in a 12-month period, you need a license. The Division now reviews profitability, historical net losses, and other prudential indicators when evaluating financial responsibility.</li>
-        <li><strong>Strategy:</strong> Audit your loan volume. If approaching the 5-loan residential threshold, either obtain a license or focus lending on commercial/business-purpose loans (which are generally exempt). Update your disclosures and compliance documentation to match the new rules.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">Business-Purpose Lending Exemption</div>
-        <span class="tag tag-opportunity">Strategy</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Loans made solely for business purposes (e.g., to fund fix-and-flip projects or commercial rehabs) are generally exempt from MA mortgage licensing requirements and many federal consumer protection rules (TILA, RESPA).</li>
-        <li><strong>Impact:</strong> Structuring your hard money loans as business-purpose loans significantly reduces regulatory burden.</li>
-        <li><strong>Strategy:</strong> Ensure all loan documentation clearly states the business purpose. Require borrowers to sign business-purpose certifications. Never lend for owner-occupied residential purchases without proper licensing. This is your biggest compliance lever.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">MA Usury Laws — 20% Criminal Threshold</div>
-        <span class="tag tag-risk">Compliance</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Massachusetts prescribes 6% legal interest unless agreed otherwise in writing. Charging above 20% per annum triggers criminal usury penalties (up to 10 years imprisonment, $10K fine).</li>
-        <li><strong>Impact:</strong> With market rates at 9–14%, plus points and fees, total effective rates can approach limits. Points, origination fees, and other charges may be counted toward the usury calculation.</li>
-        <li><strong>Strategy:</strong> Calculate your all-in effective rate including points and fees on every loan to ensure you stay below 20%. Have your attorney review fee structures. For higher-risk loans, use equity participation or profit-sharing instead of higher interest rates.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill high"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">QOZ Lending Opportunity</div>
-        <span class="tag tag-opportunity">Growth</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> With QOZ provisions now permanent and new zones coming by 2027, demand for financing in Opportunity Zones will increase.</li>
-        <li><strong>Impact:</strong> Borrowers will increasingly seek hard money loans for QOZ projects to meet the substantial improvement requirements within 30 months.</li>
-        <li><strong>Strategy:</strong> Position your lending business to serve QOZ investors. Market your speed advantage — QOZ investors need fast capital deployment. Consider creating QOZ-specific loan products with terms aligned to the 30-month improvement timeline.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">MA $1M+ Withholding — Borrower Impact</div>
-        <span class="tag tag-info">Awareness</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Your non-resident borrowers selling properties ≥$1M will have 4% withheld at closing. This reduces their available cash for loan repayment.</li>
-        <li><strong>Impact:</strong> Non-resident borrowers on high-value flips may struggle to repay your loan at closing if they haven't budgeted for the withholding.</li>
-        <li><strong>Strategy:</strong> Add withholding awareness to your underwriting process. For non-resident borrowers on $1M+ deals, ensure the exit analysis accounts for the 4% withholding. Consider requiring a withholding reserve or adjusting LTV accordingly.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">New: CFPB Reviews TRID & Right of Rescission</div>
-        <span class="tag tag-new">New — Jul 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> The CFPB issued a request for information on the TILA/RESPA Integrated Disclosure (TRID) rule, the TILA right of rescission, and reverse mortgages — comments due August 10, 2026. The review stems from a March 2026 Executive Order on "Promoting Access to Mortgage Credit" and signals deregulatory intent on mortgage disclosure requirements.</li>
-        <li><strong>Impact on you:</strong> Minimal direct impact today — your business-purpose loans are already exempt from TRID and rescission requirements. But a lighter federal disclosure regime could lower compliance costs if you ever expand into consumer-purpose or licensed residential lending, and it reinforces the value of clean business-purpose documentation as the dividing line.</li>
-        <li><strong>Strategy:</strong> No action required. Optionally, submit a comment by Aug 10 if you want simplified rules for small private lenders on the record. Keep business-purpose certifications airtight — the exemption is your regulatory moat regardless of where the rulemaking lands.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill low"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">New: CFPB Eliminates ECOA Disparate-Impact Liability</div>
-        <span class="tag tag-new">New — Jul 21, 2026</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> The CFPB's final rule amending Regulation B (published Apr 22, 2026) took effect July 21, 2026. It eliminates disparate-impact liability under the Equal Credit Opportunity Act — lenders can no longer be held liable for a facially neutral policy solely because it produces statistically worse outcomes for a protected group, absent intent to discriminate. A new "knows or should know" standard now governs what counts as prohibited discouragement of applicants, and Special Purpose Credit Program rules were updated. Credit extended under an existing SPCP before July 21 is grandfathered under the old framework.</li>
-        <li><strong>Impact on you:</strong> Modest relief on federal fair-lending exposure, but Massachusetts (along with California and New Jersey) retains independent statutory disparate-impact authority under state law, so this rollback doesn't meaningfully change your MA compliance posture. Disparate <em>treatment</em> (intentional discrimination) also remains fully illegal under both ECOA and the Fair Housing Act regardless of this rule.</li>
-        <li><strong>Strategy:</strong> Don't relax underwriting criteria based on the federal change alone — your business-purpose loan exemption remains the primary shield for your lending model, and MA state-level exposure is unaffected. If you ever expand into consumer-purpose or licensed residential lending, keep documenting neutral, consistently-applied underwriting criteria to protect against state-law claims.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill low"></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">Lead Paint Compliance for Funded Projects</div>
-        <span class="tag tag-risk">Risk</span>
-      </div>
-      <ul class="detail-list">
-        <li><strong>What:</strong> Massachusetts has some of the strictest lead paint laws in the nation (Ch. 111 § 197). Properties built before 1978 require deleading when a child under 6 resides there. Deleading must be performed by licensed contractors.</li>
-        <li><strong>Impact:</strong> Many fix-and-flip loans fund renovations on pre-1978 properties. Borrowers who skip lead abatement face massive liability — which is also a risk to your collateral value.</li>
-        <li><strong>Strategy:</strong> Require lead inspection reports in your underwriting for pre-1978 properties. Include deleading costs in the renovation budget and loan amount. This protects your collateral and helps borrowers avoid legal issues.</li>
-      </ul>
-      <div class="impact"><span class="impact-label">Business Impact</span><div class="impact-bar"><div class="impact-fill medium"></div></div></div>
-    </div>
+  <div style="border-left:4px solid #94a3b8; padding:12px; margin:12px 0; background:rgba(148,163,184,0.1); border-radius:4px;">
+    <div class="card-subtitle" style="color:var(--accent-blue);">Carwash Compliance Reminder</div>
+    <p><strong>Ongoing:</strong> Carwash operators must maintain compliance with MA environmental regulations (wastewater permits, water reclamation systems). No new regs this week, but verify state permitting is current.</p>
+    <div style="margin-top:8px;"><span class="tag">Carwash</span> <span class="tag">Regulatory</span></div>
   </div>
-</div>
+</section>
 
-<!-- ============ EMPLOYER LAWS ============ -->
-<div class="section" id="employer">
+<section class="card">
+  <div class="card-title">📅 Calendar & Deadlines</div>
+  <table>
+    <tr>
+      <th>Date</th>
+      <th>Deadline / Event</th>
+      <th>Action</th>
+    </tr>
+    <tr>
+      <td>Now</td>
+      <td>MA Money Transmitter License (if lending in MA)</td>
+      <td>Verify compliance; if not licensed, cease MA lending</td>
+    </tr>
+    <tr>
+      <td>By Dec 31, 2026</td>
+      <td>Section 179 & Bonus Depreciation Elections</td>
+      <td>Plan equipment purchases and cost seg studies</td>
+    </tr>
+    <tr>
+      <td>Jan 1, 2027</td>
+      <td>Opportunity Zones 2.0 Takes Effect</td>
+      <td>Begin planning 2027 OZ acquisitions</td>
+    </tr>
+    <tr>
+      <td>Through 2029</td>
+      <td>$40k SALT Cap Available</td>
+      <td>Maximize SALT deductions through 2029</td>
+    </tr>
+  </table>
+</section>
 
-  <div class="kpi-row">
-    <div class="kpi">
-      <div class="kpi-label">MA Minimum Wage</div>
-      <div class="kpi-value blue">$15.00/hr</div>
-      <div class="kpi-sub">No change for 2026; $16.25 bill pending</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">CT Minimum Wage</div>
-      <div class="kpi-value green">$16.94/hr</div>
-      <div class="kpi-sub">Effective Jan 1, 2026 — indexed to ECI</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">MA PFML Max Weekly</div>
-      <div class="kpi-value orange">$1,230.39</div>
-      <div class="kpi-sub">0.88% contribution rate (25+ employees)</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">CT PFML Max Weekly</div>
-      <div class="kpi-value orange">$1,016.40</div>
-      <div class="kpi-sub">0.5% employee contribution</div>
-    </div>
-  </div>
-
-  <!-- Massachusetts Employer Laws -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">Massachusetts Employer Laws — 2025/2026 Updates</div>
-      <span class="tag tag-info">MA</span>
-    </div>
-    <div class="card-grid">
-
-      <div class="card" style="margin-bottom:0">
-        <div class="card-header">
-          <div class="card-title">Pay Transparency Law</div>
-          <span class="tag tag-new">New — Oct 29, 2025</span>
-        </div>
-        <ul class="detail-list">
-          <li><strong>25+ employees:</strong> Must disclose pay ranges in all job postings</li>
-          <li><strong>100+ employees:</strong> Must submit annual demographic and pay data reports to the state</li>
-          <li><strong>Applies to:</strong> External job postings, internal transfer/promotion postings, and positions posted through third parties</li>
-          <li><strong>Penalties:</strong> Warning for first offense; fines up to $25,000 for subsequent violations</li>
-        </ul>
-        <div class="impact">
-          <span class="impact-label">Impact</span>
-          <div class="impact-bar"><div class="impact-fill high"></div></div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-bottom:0">
-        <div class="card-title">Paid Family &amp; Medical Leave (PFML) — 2026</div>
-        <ul class="detail-list">
-          <li><strong>Max weekly benefit:</strong> $1,230.39/week</li>
-          <li><strong>Contribution rate (25+ employees):</strong> 0.88% of wages (employer + employee split)</li>
-          <li><strong>Contribution rate (&lt;25 employees):</strong> 0.46% of wages (employee only)</li>
-          <li><strong>Tax change:</strong> PFML benefits are now taxable income starting Jan 1, 2026</li>
-          <li><strong>Duration:</strong> Up to 26 weeks family leave, 20 weeks medical leave per benefit year</li>
-        </ul>
-        <div class="impact">
-          <span class="impact-label">Impact</span>
-          <div class="impact-bar"><div class="impact-fill high"></div></div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-bottom:0">
-        <div class="card-title">Minimum Wage &amp; Noncompete</div>
-        <ul class="detail-list">
-          <li><strong>Minimum wage:</strong> $15.00/hr — no change for 2026</li>
-          <li><strong>Pending legislation:</strong> Bill to raise to $16.25/hr under consideration</li>
-          <li><strong>Noncompete agreements:</strong> Case law developing — courts increasingly skeptical of broad noncompetes</li>
-          <li><strong>Best practice:</strong> Limit noncompetes to 12 months maximum; consider non-solicitation agreements as alternative</li>
-        </ul>
-        <div class="impact">
-          <span class="impact-label">Impact</span>
-          <div class="impact-bar"><div class="impact-fill medium"></div></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Connecticut Employer Laws -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">Connecticut Employer Laws — 2025/2026 Updates</div>
-      <span class="tag tag-info">CT</span>
-    </div>
-    <div class="card-grid">
-
-      <div class="card" style="margin-bottom:0">
-        <div class="card-header">
-          <div class="card-title">Minimum Wage Increase</div>
-          <span class="tag tag-new">New — Jan 1, 2026</span>
-        </div>
-        <ul class="detail-list">
-          <li><strong>New rate:</strong> $16.94/hr effective January 1, 2026</li>
-          <li><strong>Indexing:</strong> Automatically adjusted annually based on Employment Cost Index (ECI)</li>
-          <li><strong>Previous rate:</strong> $16.35/hr (2025)</li>
-          <li><strong>Tipped minimum:</strong> $6.38/hr (with tips meeting full minimum)</li>
-        </ul>
-        <div class="impact">
-          <span class="impact-label">Impact</span>
-          <div class="impact-bar"><div class="impact-fill high"></div></div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-bottom:0">
-        <div class="card-header">
-          <div class="card-title">Paid Sick Leave Expansion</div>
-          <span class="tag tag-new">Expanded — Jan 2026</span>
-        </div>
-        <ul class="detail-list">
-          <li><strong>Jan 1, 2026:</strong> Applies to employers with 11+ employees (was 25+)</li>
-          <li><strong>Jan 1, 2027:</strong> Applies to ALL employers regardless of size</li>
-          <li><strong>Accrual:</strong> 1 hour per 30 hours worked, up to 40 hours/year</li>
-          <li><strong>No documentation required</strong> from employees for sick leave usage</li>
-          <li><strong>Covered reasons:</strong> Illness, injury, medical appointments, family member care, domestic violence situations</li>
-        </ul>
-        <div class="impact">
-          <span class="impact-label">Impact</span>
-          <div class="impact-bar"><div class="impact-fill high"></div></div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-bottom:0">
-        <div class="card-title">CT Paid Family &amp; Medical Leave (PFML)</div>
-        <ul class="detail-list">
-          <li><strong>Max weekly benefit:</strong> $1,016.40/week (2026)</li>
-          <li><strong>Contribution:</strong> 0.5% of wages — employee-paid</li>
-          <li><strong>Duration:</strong> Up to 12 weeks per year; 2 additional weeks for pregnancy complications</li>
-          <li><strong>Coverage:</strong> All employers with 1+ CT employees</li>
-        </ul>
-        <div class="impact">
-          <span class="impact-label">Impact</span>
-          <div class="impact-bar"><div class="impact-fill medium"></div></div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-bottom:0">
-        <div class="card-title">Anti-Discrimination Protections</div>
-        <ul class="detail-list">
-          <li><strong>Effective Oct 1, 2025:</strong> New protections for victims of sexual assault and trafficking</li>
-          <li><strong>Employer obligations:</strong> Reasonable accommodations required (schedule changes, leave, safety measures)</li>
-          <li><strong>Applies to:</strong> All Connecticut employers</li>
-          <li><strong>Retaliation prohibited</strong> against employees who request accommodations</li>
-        </ul>
-        <div class="impact">
-          <span class="impact-label">Impact</span>
-          <div class="impact-bar"><div class="impact-fill medium"></div></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Employer Laws Strategy -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">Employer Compliance Strategy</div>
-      <span class="tag tag-action">Action Required</span>
-    </div>
-    <div class="action-item orange">
-      <div class="action-number">1</div>
-      <div class="action-text"><strong>Pay Transparency (MA):</strong> Audit all job postings across all three businesses — include pay ranges for any position with 25+ employees. Set up reporting process for 100+ employee threshold.</div>
-    </div>
-    <div class="action-item orange">
-      <div class="action-number">2</div>
-      <div class="action-text"><strong>PFML Contributions:</strong> Verify payroll systems are deducting correct MA (0.88%) and CT (0.5%) PFML contributions. Note MA PFML benefits are now taxable — update W-2 processes.</div>
-    </div>
-    <div class="action-item orange">
-      <div class="action-number">3</div>
-      <div class="action-text"><strong>CT Paid Sick Leave:</strong> If you have 11+ CT employees, ensure accrual tracking is in place by Jan 1, 2026. Plan for all-employer coverage by Jan 2027.</div>
-    </div>
-    <div class="action-item green">
-      <div class="action-number">4</div>
-      <div class="action-text"><strong>CT Minimum Wage:</strong> Update payroll to $16.94/hr for all CT hourly workers effective Jan 1, 2026. Budget for annual ECI-indexed increases going forward.</div>
-    </div>
-    <div class="action-item green">
-      <div class="action-number">5</div>
-      <div class="action-text"><strong>Noncompete Review:</strong> Review existing noncompete agreements across all businesses. Consider replacing broad noncompetes with targeted non-solicitation agreements.</div>
-    </div>
-    <div class="action-item">
-      <div class="action-number">6</div>
-      <div class="action-text"><strong>Anti-Discrimination Policy:</strong> Update CT employee handbooks to include new sexual assault/trafficking victim protections and accommodation procedures.</div>
-    </div>
-  </div>
+<footer style="text-align:center; color:var(--text-muted); margin-top:60px; padding:20px; border-top:1px solid var(--border); font-size:0.85rem;">
+  <p>Last updated: 2026-09-18 • <a href="https://zennode.github.io/dashboard/#law-tax" style="color:var(--accent-blue); text-decoration:none;">View in Unified Dashboard</a></p>
+  <p>Yellow Brick Properties | Real Estate Investments, Carwash Operations, Hard Money Lending</p>
+</footer>
 
 </div>
-
-<!-- ============ ACTION PLAN ============ -->
-<div class="section" id="actions">
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">Immediate Actions (Next 30 Days)</div>
-      <span class="tag tag-action">Priority</span>
-    </div>
-    <div class="action-item orange">
-      <div class="action-number">1</div>
-      <div class="action-text"><strong>Schedule a cost segregation study</strong> on all rental properties (residential and commercial). With 100% bonus depreciation now permanent, this is the single highest-impact tax move available. Target properties purchased or improved since 2020 that haven't been studied.</div>
-    </div>
-    <div class="action-item orange">
-      <div class="action-number">2</div>
-      <div class="action-text"><strong>Audit your hard money lending volume.</strong> Count residential mortgage loans made in the past 12 months. If at or near 5, either obtain a MA Division of Banks license or restructure remaining deals as business-purpose-only loans with proper documentation.</div>
-    </div>
-    <div class="action-item orange">
-      <div class="action-number">3</div>
-      <div class="action-text"><strong>Review all-in interest rates</strong> on your hard money loan products. Calculate total effective annual rate including points, origination fees, and other charges. Ensure no product exceeds the 20% criminal usury threshold.</div>
-    </div>
-    <div class="action-item orange">
-      <div class="action-number">4</div>
-      <div class="action-text"><strong>Update your carwash wastewater compliance documentation.</strong> With the new MA RCRA authorization, ensure your permits, chemical handling procedures, and discharge records are current for any MassDEP audit.</div>
-    </div>
-    <div class="action-item orange">
-      <div class="action-number">5</div>
-      <div class="action-text"><strong>Contact your payroll provider about OBBBA W-2 reporting.</strong> Starting TY 2026, qualified tips and overtime must be separately reported on W-2 forms. Penalty relief has ended — confirm your system is updated now to avoid year-end issues.</div>
-    </div>
-    <div class="action-item orange">
-      <div class="action-number">6</div>
-      <div class="action-text"><strong>Review FY2026 property tax assessments.</strong> With a median 6% increase across MA communities, check each property's new assessment and file abatement applications by the deadline if any appear inflated. Factor increases into rental rate decisions.</div>
-    </div>
-    <div class="action-item orange">
-      <div class="action-number">7</div>
-      <div class="action-text"><strong>URGENT — Begin Section 179D-eligible construction before June 30, 2026.</strong> The energy-efficient commercial building deduction (up to $5.81/sq ft) sunsets for projects starting after June 30. Evaluate HVAC, lighting, and envelope upgrades on your commercial properties and carwash building. Spend at least 5% of project costs or begin physical work before the deadline to lock in eligibility.</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">Strategic Actions (Next 90 Days)</div>
-      <span class="tag tag-opportunity">Growth</span>
-    </div>
-    <div class="action-item green">
-      <div class="action-number">8</div>
-      <div class="action-text"><strong>Accelerate carwash equipment upgrades.</strong> Purchase planned tunnel systems, water reclamation equipment, or automation technology now. Write off 100% in year one via bonus depreciation. Water reclamation systems also reduce environmental compliance costs.</div>
-    </div>
-    <div class="action-item green">
-      <div class="action-number">9</div>
-      <div class="action-text"><strong>Evaluate commercial-to-residential conversion opportunities.</strong> If you own underperforming commercial properties, the new MA tax credit covers up to 10% of conversion costs, stacking with federal bonus depreciation on improvements.</div>
-    </div>
-    <div class="action-item green">
-      <div class="action-number">10</div>
-      <div class="action-text"><strong>Map Massachusetts Opportunity Zones</strong> and identify target properties for both direct investment and hard money lending. With QOZ now permanent, build a marketing campaign for your lending business targeting QOZ investors who need fast financing.</div>
-    </div>
-    <div class="action-item green">
-      <div class="action-number">11</div>
-      <div class="action-text"><strong>Model the SALT deduction increase</strong> with your CPA. With the cap rising to $40,400, determine whether itemizing or changing your entity structure provides a better outcome across all three businesses.</div>
-    </div>
-    <div class="action-item green">
-      <div class="action-number">12</div>
-      <div class="action-text"><strong>Structure entities for QBI optimization.</strong> Ensure each business (real estate, carwash, lending) is in a pass-through entity eligible for the 20% QBI deduction. If lending is classified as an SSTB, consider restructuring to maximize the deduction below income limits.</div>
-    </div>
-    <div class="action-item green">
-      <div class="action-number">17</div>
-      <div class="action-text"><strong>Revisit shelved variance-dependent projects.</strong> With G.L. c.40A §10 now using the easier "practical difficulty" standard (effective Jul 9, 2026), ask your land-use attorney to re-evaluate any fix-and-flip or conversion project previously denied a variance or judged unlikely to succeed under the old "substantial hardship" test.</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">Long-Term Planning (6–12 Months)</div>
-      <span class="tag tag-info">Strategic</span>
-    </div>
-    <div class="action-item">
-      <div class="action-number">13</div>
-      <div class="action-text"><strong>Implement 1031 exchange pipeline.</strong> Identify rental properties to exit and replacement targets. Chain 1031 exchanges into QOZ investments for maximum tax deferral. The combination of 1031 → QOZ → cost segregation creates a powerful triple-layer tax strategy.</div>
-    </div>
-    <div class="action-item">
-      <div class="action-number">14</div>
-      <div class="action-text"><strong>Start estate planning with the $15M exemption.</strong> Use family LLCs and irrevocable trusts to transfer real estate interests. The MA estate tax kicks in at just $2M — aggressive gifting during your lifetime using the federal exemption protects your portfolio.</div>
-    </div>
-    <div class="action-item">
-      <div class="action-number">15</div>
-      <div class="action-text"><strong>Develop a hard money lending compliance manual.</strong> With the new Division of Banks amendments, create standardized loan documentation packages, business-purpose certifications, and disclosure templates. This protects you and scales your operation.</div>
-    </div>
-    <div class="action-item">
-      <div class="action-number">16</div>
-      <div class="action-text"><strong>Explore "qualified production property" status for the carwash.</strong> Under OBBBA, nonresidential real property used in production may qualify for 100% bonus depreciation on the building itself (not just equipment). Consult your tax advisor on whether carwash operations qualify.</div>
-    </div>
-  </div>
-</div>
-
-<!-- ============ SOURCES ============ -->
-<div class="section" id="sources">
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">Federal Law & Tax Sources</div>
-    </div>
-    <ul class="detail-list">
-      <li><a class="source-link" href="https://www.irs.gov/newsroom/one-big-beautiful-bill-provisions" target="_blank">IRS — One Big Beautiful Bill Provisions</a></li>
-      <li><a class="source-link" href="https://www.currentfederaltaxdevelopments.com/blog/2026/6/18/irs-notice-2026-40-comprehensive-analysis-of-post-obbba-transitional-guidance-on-qualified-opportunity-zones" target="_blank">IRS Notice 2026-40 — Post-OBBBA QOZ Transitional Guidance (Jun 18, 2026)</a></li>
-      <li><a class="source-link" href="https://www.citrincooperman.com/In-Focus-Resource-Center/The-One-Big-Beautiful-Bill-Acts-Impact-on-Real-Estate" target="_blank">Citrin Cooperman — OBBBA Impact on Real Estate</a></li>
-      <li><a class="source-link" href="https://www.cozen.com/news-resources/publications/2025/tax-provisions-under-one-big-beautiful-bill-affecting-real-estate-investment" target="_blank">Cozen O'Connor — Tax Provisions Under OBBBA Affecting Real Estate</a></li>
-      <li><a class="source-link" href="https://warrenaverett.com/insights/one-big-beautiful-bill-bonus-depreciation/" target="_blank">Warren Averett — OBBBA Bonus Depreciation Breakdown</a></li>
-      <li><a class="source-link" href="https://www.bdo.com/insights/tax/one-big-beautiful-bill-act-expands-100-depreciation-expensing-opportunities" target="_blank">BDO — OBBBA 100% Depreciation Expensing</a></li>
-      <li><a class="source-link" href="https://www.allenmatkins.com/real-ideas/bonus-depreciation-is-back-and-other-big-beautiful-taxes.html" target="_blank">Allen Matkins — Bonus Depreciation Is Back</a></li>
-      <li><a class="source-link" href="https://turbotax.intuit.com/tax-tips/general/taxes-2021-7-upcoming-tax-law-changes/L3xFucBvV" target="_blank">TurboTax — OBBBA Tax Law Changes Overview</a></li>
-      <li><a class="source-link" href="https://vipwealthadvisors.com/insights/section-179-deduction-2026" target="_blank">VIP Wealth Advisors — Section 179 Deduction 2026</a></li>
-      <li><a class="source-link" href="https://www.stinson.com/newsroom-publications-one-big-beautiful-bill-explained" target="_blank">Stinson LLP — One Big Beautiful Bill Explained</a></li>
-      <li><a class="source-link" href="https://www.irs.gov/newsroom/treasury-irs-issue-guidance-on-the-additional-first-year-depreciation-deduction-amended-as-part-of-the-one-big-beautiful-bill" target="_blank">IRS — Notice 2026-11: Bonus Depreciation Interim Guidance</a></li>
-      <li><a class="source-link" href="https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill" target="_blank">IRS — Tax Year 2026 Inflation Adjustments (OBBBA)</a></li>
-      <li><a class="source-link" href="https://www.cbh.com/insights/articles/irs-notice-2026-11-interim-guidance-on-bonus-depreciation/" target="_blank">Cherry Bekaert — IRS Notice 2026-11 Analysis</a></li>
-      <li><a class="source-link" href="https://www.schaafcpa.com/post/real-estate-investor-tax-guide-2026-what-the-one-big-beautiful-bill-changed-and-what-you-should-do" target="_blank">Schaaf CPA — Real Estate Investor Tax Guide 2026</a></li>
-      <li><a class="source-link" href="https://www.eversheds-sutherland.com/en/united-states/insights/irs-and-treasury-release-notice-2026-16-providing-initial-round-of-interim-guidance-on" target="_blank">Eversheds Sutherland — IRS Notice 2026-16 Qualified Production Property</a></li>
-      <li><a class="source-link" href="https://www.irs.gov/newsroom/treasury-irs-provide-guidance-to-states-for-nominating-census-tracts-as-qualified-opportunity-zones-under-the-one-big-beautiful-bill" target="_blank">IRS — QOZ State Nomination Guidance (OBBBA)</a></li>
-      <li><a class="source-link" href="https://eig.org/opportunity-zones-2-0-where-things-stand/" target="_blank">Economic Innovation Group — Opportunity Zones 2.0: Where Things Stand (Jul 1 designation deadline)</a></li>
-      <li><a class="source-link" href="https://www.irs.gov/newsroom/one-big-beautiful-bill-provisions-individuals-and-workers" target="_blank">IRS — OBBBA Provisions for Individuals and Workers</a></li>
-      <li><a class="source-link" href="https://www.irs.gov/newsroom/one-big-beautiful-bill-notices" target="_blank">IRS — One Big Beautiful Bill Guidance Notices</a></li>
-      <li><a class="source-link" href="https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill" target="_blank">IRS — 2026 Tax Inflation Adjustments (OBBBA Amendments)</a></li>
-      <li><a class="source-link" href="https://www.jacksonlewis.com/insights/obbba-2026-immediate-action-required-employers" target="_blank">Jackson Lewis — OBBBA 2026 Employer W-2 Reporting Requirements</a></li>
-      <li><a class="source-link" href="https://www.hcvt.com/alertarticle-SALT-Deduction-Cap-Increase-Under-OBBBA" target="_blank">HCVT — SALT Deduction Cap Increase Under OBBBA</a></li>
-      <li><a class="source-link" href="https://kahnlitwin.com/blogs/tax-blog/1031-exchanges-in-2026-whats-changed-and-what-investors-should-know" target="_blank">KahnLitwin — 1031 Exchanges in 2026</a></li>
-      <li><a class="source-link" href="https://www.wipfli.com/insights/articles/tax-the-179d-deduction-ends-soon-but-savings-are-still-possible" target="_blank">Wipfli — Section 179D Deduction Ends Soon</a></li>
-      <li><a class="source-link" href="https://www.constructionowners.com/news/179d-energy-efficient-building-tax-deduction-to-end-after-june-2026" target="_blank">Construction Owners — 179D Energy-Efficient Building Deduction to End After June 2026</a></li>
-      <li><a class="source-link" href="https://www.irs.gov/newsroom/irs-announces-terms-of-a-time-limited-settlement-opportunity-for-eligible-taxpayers-involved-in-conservation-easement-disputes" target="_blank">IRS — Conservation Easement Settlement Opportunity (IR-2026-65)</a></li>
-      <li><a class="source-link" href="https://www.gatesshields.com/blog/2026/march/fincen-s-new-real-estate-reporting-rule-is-here-/" target="_blank">Gates Shields — FinCEN Real Estate Reporting Rule</a></li>
-      <li><a class="source-link" href="https://www.grossmcginley.com/resources/blog/fincens-real-estate-reporting-rule-struck-down-18-days-after-taking-effect/" target="_blank">Gross McGinley — FinCEN Real Estate Rule Struck Down</a></li>
-      <li><a class="source-link" href="https://www.bdo.com/insights/tax/managing-2026-income-taxes-on-qualified-opportunity-zone-fund-investments" target="_blank">BDO — Managing 2026 Income Taxes on QOZ Fund Investments (Dec 31 recognition)</a></li>
-      <li><a class="source-link" href="https://home.treasury.gov/news/press-releases/sb0550" target="_blank">U.S. Treasury — New OZ Designation Cycle Opened (Jul 1, 2026; nominations due Sep 28)</a></li>
-      <li><a class="source-link" href="https://www.journalofaccountancy.com/news/2026/jul/irs-raises-standard-mileage-rates-for-remainder-of-2026/" target="_blank">Journal of Accountancy — IRS Raises Standard Mileage Rates for Remainder of 2026 (76¢/mile, eff. Jul 1)</a></li>
-      <li><a class="source-link" href="https://www.congress.gov/bill/119th-congress/house-bill/6644" target="_blank">Congress.gov — H.R. 6644, 21st Century ROAD to Housing Act (law Jul 11, 2026)</a></li>
-      <li><a class="source-link" href="https://www.bakerbotts.com/thought-leadership/publications/2026/june/the-21st-century-road-to-housing-act-congress-passes-final-bill" target="_blank">Baker Botts — ROAD to Housing Act: What's in the Final Bill (institutional investor moratorium, BTR carve-out)</a></li>
-      <li><a class="source-link" href="https://bipartisanpolicy.org/issue-brief/inside-the-deal-whats-in-the-final-21st-century-road-to-housing-act/" target="_blank">Bipartisan Policy Center — Inside the Final ROAD to Housing Act</a></li>
-      <li><a class="source-link" href="https://www.irs.gov/newsroom/irs-simplifies-penalty-relief-introduces-automatic-process-for-eligible-taxpayers" target="_blank">IRS — Automatic Exemption from Penalty (AEP) Replaces First Time Abate</a></li>
-      <li><a class="source-link" href="https://www.irs.gov/newsroom/automatic-exemption-from-penalty-what-taxpayers-should-know" target="_blank">IRS — AEP: What Taxpayers Should Know</a></li>
-      <li><a class="source-link" href="https://www.mondaq.com/unitedstates/contracts-and-commercial-law/1821992/mortgage-banking-update-july-23-2026" target="_blank">Mortgage Banking Update (Jul 23, 2026) — CFPB RFI on TRID / Right of Rescission (comments due Aug 10)</a></li>
-      <li><a class="source-link" href="https://blog.cobaltintelligence.com/post/cfpb-kills-ecoa-disparate-impact-effective-july-21" target="_blank">CFPB Kills ECOA Disparate Impact, Effective July 21, 2026</a></li>
-      <li><a class="source-link" href="https://www.garrishorn.com/blog/rtt34ypsgwvz2ojpgfsazc0c3zu9mm" target="_blank">Garris Horn — CFPB's Fair Lending Amendments Effective July 21, 2026</a></li>
-      <li><a class="source-link" href="https://www.venable.com/insights/publications/2026/05/cfpb-makes-significant-changes-to-regulation-b" target="_blank">Venable LLP — CFPB Makes Significant Changes to Regulation B</a></li>
-    </ul>
-  </div>
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">Massachusetts State Sources</div>
-    </div>
-    <ul class="detail-list">
-      <li><a class="source-link" href="https://www.mass.gov/info-details/massachusetts-4-surtax-on-taxable-income" target="_blank">Mass.gov — 4% Surtax on Taxable Income</a></li>
-      <li><a class="source-link" href="https://news.bloombergtax.com/daily-tax-report/massachusetts-dor-amends-withholding-tax-rules" target="_blank">Bloomberg Tax — MA DOR Amends Withholding Tax Rules for Surtax (eff. Jun 5, 2026)</a></li>
-      <li><a class="source-link" href="https://taxnews.ey.com/news/2026-1331-massachusetts-delays-conformity-to-certain-federal-tax-changes-made-by-the-obbba-creates-an-elective-ptet-for-surtax-on-high-income-earners" target="_blank">EY — MA Delays OBBBA Conformity, Extends PTET to 4% Surtax (H.5470)</a></li>
-      <li><a class="source-link" href="https://www.pwc.com/us/en/services/tax/library/massachusetts-requires-tax-modifications-extends-ptet-benefits.html" target="_blank">PwC — MA Extends PTET Benefits to "Millionaire's Tax"</a></li>
-      <li><a class="source-link" href="https://darroweverett.com/massachusetts-real-estate-transfers-2025-rule-legal-analysis/" target="_blank">Darrow Everett — MA Real Estate Transfers $1M+ New Rules</a></li>
-      <li><a class="source-link" href="https://cozbycpa.com/2026/01/26/ma-dor-tax-law-changes-and-new-initiatives-for-tax-year-2025/" target="_blank">Cozby CPA — MA DOR Tax Changes for 2025</a></li>
-      <li><a class="source-link" href="https://www.consumerfinanceandfintechblog.com/2025/10/massachusetts-finalizes-amendments-to-mortgage-licensing-truth-in-lending-and-small-loan-regulations/" target="_blank">Consumer Finance Blog — MA Mortgage Licensing Amendments</a></li>
-      <li><a class="source-link" href="https://nationaltaxreports.com/massachusetts-tax-on-capital-gains/" target="_blank">National Tax Reports — MA Capital Gains Tax 2025-2026</a></li>
-      <li><a class="source-link" href="https://www.realized1031.com/1031-exchange/massachusetts" target="_blank">Realized 1031 — Massachusetts 1031 Exchange Guide</a></li>
-      <li><a class="source-link" href="https://www.dfllp.com/hard-money-lenders-in-massachusetts-heres-what-you-need-to-know/" target="_blank">Dalton & Finegold — Hard Money Lenders in MA</a></li>
-      <li><a class="source-link" href="https://www.steadily.com/blog/rental-property-tax-laws-regulations-massachusetts" target="_blank">Steadily — MA Rental Property Tax Laws 2026</a></li>
-      <li><a class="source-link" href="https://www.albaneselawllc.com/blog/massachusetts-estate-tax/" target="_blank">Albanese Law — Massachusetts Estate Tax 2026</a></li>
-      <li><a class="source-link" href="https://www.mass.gov/info-details/massachusetts-4-surtax-on-taxable-income" target="_blank">Mass.gov — 2026 Surtax Threshold ($1,107,750)</a></li>
-      <li><a class="source-link" href="https://www.mass.gov/news/april-2026-mid-month-revenue-report" target="_blank">Mass.gov — April 2026 Mid-Month Revenue Report</a></li>
-      <li><a class="source-link" href="https://www.bostonglobe.com/2026/05/25/metro/millionaires-tax-massachusetts/" target="_blank">Boston Globe — Millionaires Tax Generates $3.1B for Mass. (May 2026)</a></li>
-      <li><a class="source-link" href="https://www.propertycraft.com/resources/mass-law-changes-in-2026-3-to-watch" target="_blank">PropertyCraft — MA Legislative Measures to Watch 2026</a></li>
-      <li><a class="source-link" href="https://www.mass.gov/news/ags-office-releases-advisory-on-new-law-banning-forced-renter-paid-broker-fees" target="_blank">Mass.gov — AG Advisory on Broker-Fee Ban</a></li>
-      <li><a class="source-link" href="https://www.wbur.org/news/2026/05/14/massachusetts-landlords-brokers-fee-rental-law" target="_blank">WBUR — Broker-Fee Ban Complaints Mounting (May–Jun 2026)</a></li>
-      <li><a class="source-link" href="https://www.mass.gov/info-details/massachusetts-dor-tax-due-dates-and-extensions" target="_blank">Mass.gov — DOR Tax Due Dates (Q2 estimates Jun 15)</a></li>
-      <li><a class="source-link" href="https://changeflow.com/govping/banking-finance/ma-division-of-banks-enforcement-actions" target="_blank">GovPing — MA Division of Banks Enforcement Actions 2026</a></li>
-      <li><a class="source-link" href="https://www.propertycraft.com/resources/mass-law-changes-in-2026-3-to-watch" target="_blank">PropertyCraft — MA Rent Stabilization & Legislative Watch 2026</a></li>
-      <li><a class="source-link" href="https://www.abundanthousingma.org/2025-2026-priorities/" target="_blank">Abundant Housing MA — 2025-2026 Legislative Priorities</a></li>
-      <li><a class="source-link" href="https://ballotpedia.org/Massachusetts_Rent_Control_Initiative_(2026)" target="_blank">Ballotpedia — Massachusetts Rent Control Initiative (2026)</a></li>
-      <li><a class="source-link" href="https://www.wbur.org/news/2026/06/23/massachusetts-high-court-rent-control-ballot-question-struck" target="_blank">WBUR — High Court Strikes Rent Control Ballot Question (Jun 23, 2026)</a></li>
-      <li><a class="source-link" href="https://commonwealthbeacon.org/ballot-questions/mass-high-court-strikes-rent-control-question-from-ballot/" target="_blank">CommonWealth Beacon — SJC Strikes Rent Control Question From Ballot</a></li>
-      <li><a class="source-link" href="https://www.boston.gov/news/council-adopts-resolution-supporting-2026-rent-stabilization-ballot-question" target="_blank">Boston.gov — Council Adopts Resolution Supporting Rent Stabilization Ballot Question</a></li>
-      <li><a class="source-link" href="https://www.wbur.org/news/2025/11/20/rent-control-ballot-question-massachusetts-2026-michelle-wu" target="_blank">WBUR — Rent Control Ballot Question Fight in Massachusetts</a></li>
-      <li><a class="source-link" href="https://www.wgbh.org/news/housing/2026-02-27/rent-control-the-governor-says-no-bostons-mayor-says-yes-it-could-be-up-to-voters" target="_blank">GBH — Rent Control: Governor vs. Mayor on Ballot Question</a></li>
-      <li><a class="source-link" href="https://malegislature.gov/PressRoom/Detail?pressReleaseId=309" target="_blank">MA Legislature — Senate Passes Housing Affordability Package</a></li>
-      <li><a class="source-link" href="https://thebostonsun.com/2026/01/22/tax-relief-legislation-overwhelmingly-passes-senate/" target="_blank">Boston Sun — Tax Relief Legislation Passes Senate (Jan 2026)</a></li>
-      <li><a class="source-link" href="https://senatorjasonlewis.com/2026/01/20/senior-property-tax-exemption/" target="_blank">Sen. Lewis — Senior Property Tax Exemption Bill</a></li>
-      <li><a class="source-link" href="https://www.macdc.org/sites/default/files/documents/HERO_Coalition_Background_and_Campaign_Information_1.pdf" target="_blank">MACDC — Deed Excise Tax Increase Proposal (HERO Coalition)</a></li>
-      <li><a class="source-link" href="https://www.mass.gov/info-details/fy2026-tax-levies-assessed-values-and-tax-rates" target="_blank">Mass.gov — FY2026 Tax Levies, Assessed Values and Tax Rates</a></li>
-      <li><a class="source-link" href="https://www.hrwlawyers.com/news-and-events/client-alerts/massachusetts-dfml-2026-pfml-poster-updated-rates/" target="_blank">HRW Lawyers — 2026 MA PFML Changes and Updated Rates</a></li>
-      <li><a class="source-link" href="https://www.gordonllp.com/blog/what-are-the-massachusetts-new-employment-laws-for-2026/" target="_blank">Gordon Law Group — Massachusetts New Employment Laws 2026</a></li>
-      <li><a class="source-link" href="https://www.mass.gov/important-changes/updates-to-the-massachusetts-rental-voucher-program-mrvp-alternative-housing-voucher-program-ahvp" target="_blank">Mass.gov — Updates to MRVP/AHVP Voucher Programs (effective Jul 1, 2026)</a></li>
-      <li><a class="source-link" href="https://www.federalregister.gov/documents/2026/07/06/2026-13615/draft-guidance-for-reducing-risk-from-perfluorooctanoic-acid-pfoa-and-perfluorooctane-sulfonic-acid" target="_blank">Federal Register — EPA Draft Guidance on PFOA/PFOS in Biosolids (Jul 2026)</a></li>
-      <li><a class="source-link" href="https://www.epa.gov/newsreleases/epa-seeks-public-comment-draft-guidance-reducing-risk-pfoa-and-pfos-biosolids-make" target="_blank">EPA — Public Comment Sought on Draft PFAS-in-Biosolids Guidance</a></li>
-      <li><a class="source-link" href="https://www.mass.gov/info-details/2026-massachusetts-opportunity-zone-program" target="_blank">Mass.gov — 2026 Massachusetts Opportunity Zone Program (103 zones, early-Sept submission)</a></li>
-      <li><a class="source-link" href="https://www.wbur.org/news/2026/07/09/massachusetts-fy2027-budget" target="_blank">WBUR — Healey Signs $63.4B FY2027 Budget (Jul 9, 2026)</a></li>
-      <li><a class="source-link" href="https://www.wgbh.org/news/local/2026-07-09/as-epa-steps-back-mass-lawmakers-push-for-stricter-bans-on-forever-chemicals" target="_blank">GBH — MA Lawmakers Push Stricter PFAS Bans (Jul 9, 2026)</a></li>
-      <li><a class="source-link" href="https://malegislature.gov/Bills/194/S1504" target="_blank">MA Legislature — S.1504 PFAS Bill (Cyr)</a></li>
-      <li><a class="source-link" href="https://www.nixonpeabody.com/insights/alerts/2026/07/17/massachusetts-zoning-changes-ease-residential-variance-standards" target="_blank">Nixon Peabody — MA Zoning Changes Ease Residential Variance Standards</a></li>
-      <li><a class="source-link" href="https://www.bowditch.com/bowditchrealestateblog/2026/07/15/massachusetts-legislature-approves-significant-amendments-to-the-zoning-act/" target="_blank">Bowditch — MA Legislature Approves Significant Amendments to the Zoning Act</a></li>
-      <li><a class="source-link" href="https://www.davismalm.com/resource/major-changes-to-the-massachusetts-zoning-act-expand-development-rights/" target="_blank">Davis Malm — Major Changes to the MA Zoning Act Expand Development Rights</a></li>
-      <li><a class="source-link" href="https://www.wgbh.org/news/local/2026-07-29/july-31-isnt-the-hard-deadline-anymore-so-when-will-beacon-hill-actually-finish-up" target="_blank">GBH — July 31 Isn't the Hard Deadline Anymore for Beacon Hill</a></li>
-      <li><a class="source-link" href="https://malegislature.gov/PressRoom/Detail?pressReleaseId=364" target="_blank">MA Legislature — Senate Delivers Mass Ready Act</a></li>
-    </ul>
-  </div>
-</div>
-
-</div><!-- /main -->
-
-<script>
-// Tab navigation
-const tabs = document.querySelectorAll('.tab');
-const sections = document.querySelectorAll('.section');
-
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    tabs.forEach(t => t.classList.remove('active'));
-    sections.forEach(s => s.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(tab.dataset.tab).classList.add('active');
-  });
-});
-
-// Collapsible sections
-document.querySelectorAll('.collapsible-header').forEach(header => {
-  header.addEventListener('click', () => {
-    header.classList.toggle('open');
-    header.nextElementSibling.classList.toggle('open');
-  });
-});
-
-// Update date
-document.getElementById('updatedDate').textContent = 'Updated: August 30, 2026';
-</script>
 </body>
 </html>
